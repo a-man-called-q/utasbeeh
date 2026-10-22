@@ -1,0 +1,8 @@
+# Projects in this workspace. Each one has its own moon.yml.
+projects:
+  - "apps/*"
+  - "packages/*"
+
+vcs:
+  defaultBranch: "main"
+  provider: "github"

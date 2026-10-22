@@ -1,0 +1,23 @@
+name: tasbeeh
+description: Dzikir counter dan Qur'an reader.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.5
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  design_system:
+    path: ../../packages/design_system
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

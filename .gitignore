@@ -1,0 +1,11 @@
+
+# moon
+.moon/cache
+.moon/docker
+
+# Dart / Flutter (workspace root)
+.dart_tool/
+build/
+*.iml
+.idea/
+.DS_Store
