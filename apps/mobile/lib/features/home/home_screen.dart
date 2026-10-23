@@ -63,9 +63,30 @@ class _HomeScreenState extends State<HomeScreen> {
             MediaQuery.paddingOf(context).bottom + 24,
           ),
           children: [
-            overline(_dateLabel(now).toUpperCase()),
-            const SizedBox(height: 8),
-            title("Assalāmu'alaikum"),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      overline(_dateLabel(now).toUpperCase()),
+                      const SizedBox(height: 8),
+                      title("Assalāmu'alaikum"),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(
+                    'assets/branding/tasbeeh-icon.png',
+                    width: 48,
+                    height: 48,
+                    semanticLabel: 'Logo Tasbeeh',
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             DzikirTodayStatus(services: services),
             const SizedBox(height: 56),

@@ -62,3 +62,17 @@ only selectable once the purchase layer reports them through
 Full refraction needs Impeller and Flutter GPU. iOS enables it via
 `FLTEnableFlutterGPU` in `Info.plist`. Android does not yet, so it renders the
 renderer's FakeGlass fallback.
+
+## App logo
+
+The ChatGPT-generated transparent master is
+`apps/mobile/assets/branding/tasbeeh-logo.png`; its generation prompt is saved
+alongside it in `prompt.txt`. The opaque `tasbeeh-icon.png` is used in the home
+header and for the native launcher icons. Android also includes adaptive and
+monochrome themed icons; iOS includes every size in the AppIcon catalog.
+
+To regenerate the icons after changing the master (Python with Pillow):
+
+```bash
+python3 apps/mobile/tool/generate_app_icons.py
+```
