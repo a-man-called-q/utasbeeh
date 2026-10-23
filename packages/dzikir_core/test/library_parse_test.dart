@@ -53,6 +53,41 @@ void main() {
     expect(library.byId('seq')!.entries.single.target, 3);
   });
 
+  test('parses segments that add up to the text', () {
+    final json = _valid();
+    ((json['texts'] as Map)['a'] as Map)['segments'] = [
+      {'arabic': 'سُبْحَانَ', 'latin': 'Subha', 'translation': 'x'},
+      {'arabic': 'اللَّهِ', 'latin': 'nallah', 'translation': ''},
+    ];
+    expect(
+      () => DzikirLibrary.parse(jsonEncode(json)),
+      throwsFormatException,
+      reason: 'empty translation',
+    );
+
+    ((json['texts'] as Map)['a'] as Map)['segments'] = [
+      {'arabic': 'سُبْحَانَ', 'latin': 'Subha'},
+      {'arabic': 'اللَّهِ', 'latin': 'nallah'},
+    ];
+    final text = DzikirLibrary.parse(jsonEncode(json))
+        .collections
+        .first
+        .entries
+        .first
+        .text;
+    expect(text.segments, hasLength(2));
+    expect(text.segments.first.translation, isNull);
+  });
+
+  test('rejects segments that drift from the text', () {
+    final json = _valid();
+    ((json['texts'] as Map)['a'] as Map)['segments'] = [
+      {'arabic': 'سُبْحَانَ', 'latin': 'Subha'},
+      {'arabic': 'اللَّه', 'latin': 'nallah'},
+    ];
+    expect(() => DzikirLibrary.parse(jsonEncode(json)), throwsFormatException);
+  });
+
   test('rejects an entry pointing at a missing text', () {
     expectRejected((json) => _firstEntry(json)['text'] = 'missing');
   });

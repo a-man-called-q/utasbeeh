@@ -1,27 +1,59 @@
 {
-  "version": 1,
+  "version": 2,
   "reference": "Hisnul Muslim (Sa'id bin Ali bin Wahf Al-Qahthani)",
   "reviewed": false,
   "texts": {
     "ayat_kursi": {
       "arabic": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
       "latin": "Allāhu lā ilāha illā huwal-ḥayyul-qayyūm, lā ta'khużuhū sinatuw wa lā naum, lahū mā fis-samāwāti wa mā fil-arḍ, man żal-lażī yasyfa'u 'indahū illā bi'iżnih, ya'lamu mā baina aidīhim wa mā khalfahum, wa lā yuḥīṭūna bisyai'im min 'ilmihī illā bimā syā', wasi'a kursiyyuhus-samāwāti wal-arḍ, wa lā ya'ūduhū ḥifẓuhumā, wa huwal-'aliyyul-'aẓīm.",
-      "translation": "Allah, tidak ada tuhan selain Dia, Yang Mahahidup lagi terus-menerus mengurus makhluk-Nya. Dia tidak mengantuk dan tidak tidur. Milik-Nya apa yang di langit dan di bumi. Tidak ada yang dapat memberi syafaat di sisi-Nya tanpa izin-Nya. Dia mengetahui apa yang di hadapan dan di belakang mereka, sedangkan mereka tidak mengetahui sesuatu pun dari ilmu-Nya kecuali apa yang Dia kehendaki. Kursi-Nya meliputi langit dan bumi, dan Dia tidak merasa berat memelihara keduanya. Dialah Yang Mahatinggi lagi Mahaagung."
+      "translation": "Allah, tidak ada tuhan selain Dia, Yang Mahahidup lagi terus-menerus mengurus makhluk-Nya. Dia tidak mengantuk dan tidak tidur. Milik-Nya apa yang di langit dan di bumi. Tidak ada yang dapat memberi syafaat di sisi-Nya tanpa izin-Nya. Dia mengetahui apa yang di hadapan dan di belakang mereka, sedangkan mereka tidak mengetahui sesuatu pun dari ilmu-Nya kecuali apa yang Dia kehendaki. Kursi-Nya meliputi langit dan bumi, dan Dia tidak merasa berat memelihara keduanya. Dialah Yang Mahatinggi lagi Mahaagung.",
+      "segments": [
+        {"arabic": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ", "latin": "Allāhu lā ilāha illā huwal-ḥayyul-qayyūm,", "translation": "Allah, tidak ada tuhan selain Dia, Yang Mahahidup lagi terus-menerus mengurus makhluk-Nya."},
+        {"arabic": "لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ", "latin": "lā ta'khużuhū sinatuw wa lā naum,", "translation": "Dia tidak mengantuk dan tidak tidur."},
+        {"arabic": "لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ", "latin": "lahū mā fis-samāwāti wa mā fil-arḍ,", "translation": "Milik-Nya apa yang di langit dan di bumi."},
+        {"arabic": "مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ", "latin": "man żal-lażī yasyfa'u 'indahū illā bi'iżnih,", "translation": "Tidak ada yang dapat memberi syafaat di sisi-Nya tanpa izin-Nya."},
+        {"arabic": "يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ", "latin": "ya'lamu mā baina aidīhim wa mā khalfahum,", "translation": "Dia mengetahui apa yang di hadapan dan di belakang mereka,"},
+        {"arabic": "وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ", "latin": "wa lā yuḥīṭūna bisyai'im min 'ilmihī illā bimā syā',", "translation": "sedangkan mereka tidak mengetahui sesuatu pun dari ilmu-Nya kecuali apa yang Dia kehendaki."},
+        {"arabic": "وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ", "latin": "wasi'a kursiyyuhus-samāwāti wal-arḍ,", "translation": "Kursi-Nya meliputi langit dan bumi,"},
+        {"arabic": "وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ", "latin": "wa lā ya'ūduhū ḥifẓuhumā,", "translation": "dan Dia tidak merasa berat memelihara keduanya."},
+        {"arabic": "وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ", "latin": "wa huwal-'aliyyul-'aẓīm.", "translation": "Dialah Yang Mahatinggi lagi Mahaagung."}
+      ]
     },
     "al_muawwidzat": {
       "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ هُوَ ٱللَّهُ أَحَدٌ ٱللَّهُ ٱلصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ\nبِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ مِن شَرِّ مَا خَلَقَ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ\nبِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ مَلِكِ ٱلنَّاسِ إِلَٰهِ ٱلنَّاسِ مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
       "latin": "Qul huwallāhu aḥad, allāhuṣ-ṣamad, lam yalid wa lam yūlad, wa lam yakul lahū kufuwan aḥad.\nQul a'ūżu birabbil-falaq, min syarri mā khalaq, wa min syarri gāsiqin iżā waqab, wa min syarrin-naffāṡāti fil-'uqad, wa min syarri ḥāsidin iżā ḥasad.\nQul a'ūżu birabbin-nās, malikin-nās, ilāhin-nās, min syarril-waswāsil-khannās, allażī yuwaswisu fī ṣudūrin-nās, minal-jinnati wan-nās.",
-      "translation": "Al-Ikhlas, Al-Falaq, dan An-Nas: tiga surah pelindung (al-mu'awwidzat), masing-masing diawali basmalah."
+      "translation": "Al-Ikhlas, Al-Falaq, dan An-Nas: tiga surah pelindung (al-mu'awwidzat), masing-masing diawali basmalah.",
+      "segments": [
+        {"arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ هُوَ ٱللَّهُ أَحَدٌ ٱللَّهُ ٱلصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ", "latin": "Qul huwallāhu aḥad, allāhuṣ-ṣamad, lam yalid wa lam yūlad, wa lam yakul lahū kufuwan aḥad.", "label": "Al-Ikhlas"},
+        {"arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ مِن شَرِّ مَا خَلَقَ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", "latin": "Qul a'ūżu birabbil-falaq, min syarri mā khalaq, wa min syarri gāsiqin iżā waqab, wa min syarrin-naffāṡāti fil-'uqad, wa min syarri ḥāsidin iżā ḥasad.", "label": "Al-Falaq"},
+        {"arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ مَلِكِ ٱلنَّاسِ إِلَٰهِ ٱلنَّاسِ مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ", "latin": "Qul a'ūżu birabbin-nās, malikin-nās, ilāhin-nās, min syarril-waswāsil-khannās, allażī yuwaswisu fī ṣudūrin-nās, minal-jinnati wan-nās.", "label": "An-Nas"}
+      ]
     },
     "ashbahna": {
       "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَٰذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَٰذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
       "latin": "Aṣbaḥnā wa aṣbaḥal-mulku lillāh, wal-ḥamdu lillāh, lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamdu wa huwa 'alā kulli syai'in qadīr. Rabbi as'aluka khaira mā fī hāżal-yaumi wa khaira mā ba'dah, wa a'ūżu bika min syarri mā fī hāżal-yaumi wa syarri mā ba'dah. Rabbi a'ūżu bika minal-kasali wa sū'il-kibar. Rabbi a'ūżu bika min 'ażābin fin-nāri wa 'ażābin fil-qabr.",
-      "translation": "Kami memasuki pagi dan kerajaan ini milik Allah. Segala puji bagi Allah. Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Ya Rabb, aku memohon kebaikan hari ini dan sesudahnya, dan berlindung kepada-Mu dari keburukan hari ini dan sesudahnya. Ya Rabb, aku berlindung kepada-Mu dari kemalasan dan buruknya masa tua. Ya Rabb, aku berlindung kepada-Mu dari azab neraka dan azab kubur."
+      "translation": "Kami memasuki pagi dan kerajaan ini milik Allah. Segala puji bagi Allah. Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Ya Rabb, aku memohon kebaikan hari ini dan sesudahnya, dan berlindung kepada-Mu dari keburukan hari ini dan sesudahnya. Ya Rabb, aku berlindung kepada-Mu dari kemalasan dan buruknya masa tua. Ya Rabb, aku berlindung kepada-Mu dari azab neraka dan azab kubur.",
+      "segments": [
+        {"arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ،", "latin": "Aṣbaḥnā wa aṣbaḥal-mulku lillāh, wal-ḥamdu lillāh,", "translation": "Kami memasuki pagi dan kerajaan ini milik Allah. Segala puji bagi Allah."},
+        {"arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ،", "latin": "lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamdu wa huwa 'alā kulli syai'in qadīr.", "translation": "Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu."},
+        {"arabic": "رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَٰذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ،", "latin": "Rabbi as'aluka khaira mā fī hāżal-yaumi wa khaira mā ba'dah,", "translation": "Ya Rabb, aku memohon kebaikan hari ini dan sesudahnya,"},
+        {"arabic": "وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَٰذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ،", "latin": "wa a'ūżu bika min syarri mā fī hāżal-yaumi wa syarri mā ba'dah.", "translation": "dan berlindung kepada-Mu dari keburukan hari ini dan sesudahnya."},
+        {"arabic": "رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ،", "latin": "Rabbi a'ūżu bika minal-kasali wa sū'il-kibar.", "translation": "Ya Rabb, aku berlindung kepada-Mu dari kemalasan dan buruknya masa tua."},
+        {"arabic": "رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ", "latin": "Rabbi a'ūżu bika min 'ażābin fin-nāri wa 'ażābin fil-qabr.", "translation": "Ya Rabb, aku berlindung kepada-Mu dari azab neraka dan azab kubur."}
+      ]
     },
     "amsayna": {
       "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَٰذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَٰذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا، رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
       "latin": "Amsainā wa amsal-mulku lillāh, wal-ḥamdu lillāh, lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamdu wa huwa 'alā kulli syai'in qadīr. Rabbi as'aluka khaira mā fī hāżihil-lailati wa khaira mā ba'dahā, wa a'ūżu bika min syarri mā fī hāżihil-lailati wa syarri mā ba'dahā. Rabbi a'ūżu bika minal-kasali wa sū'il-kibar. Rabbi a'ūżu bika min 'ażābin fin-nāri wa 'ażābin fil-qabr.",
-      "translation": "Kami memasuki petang dan kerajaan ini milik Allah. Segala puji bagi Allah. Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Ya Rabb, aku memohon kebaikan malam ini dan sesudahnya, dan berlindung kepada-Mu dari keburukan malam ini dan sesudahnya. Ya Rabb, aku berlindung kepada-Mu dari kemalasan dan buruknya masa tua. Ya Rabb, aku berlindung kepada-Mu dari azab neraka dan azab kubur."
+      "translation": "Kami memasuki petang dan kerajaan ini milik Allah. Segala puji bagi Allah. Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Ya Rabb, aku memohon kebaikan malam ini dan sesudahnya, dan berlindung kepada-Mu dari keburukan malam ini dan sesudahnya. Ya Rabb, aku berlindung kepada-Mu dari kemalasan dan buruknya masa tua. Ya Rabb, aku berlindung kepada-Mu dari azab neraka dan azab kubur.",
+      "segments": [
+        {"arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ،", "latin": "Amsainā wa amsal-mulku lillāh, wal-ḥamdu lillāh,", "translation": "Kami memasuki petang dan kerajaan ini milik Allah. Segala puji bagi Allah."},
+        {"arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ،", "latin": "lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamdu wa huwa 'alā kulli syai'in qadīr.", "translation": "Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu."},
+        {"arabic": "رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَٰذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا،", "latin": "Rabbi as'aluka khaira mā fī hāżihil-lailati wa khaira mā ba'dahā,", "translation": "Ya Rabb, aku memohon kebaikan malam ini dan sesudahnya,"},
+        {"arabic": "وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَٰذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا،", "latin": "wa a'ūżu bika min syarri mā fī hāżihil-lailati wa syarri mā ba'dahā.", "translation": "dan berlindung kepada-Mu dari keburukan malam ini dan sesudahnya."},
+        {"arabic": "رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ،", "latin": "Rabbi a'ūżu bika minal-kasali wa sū'il-kibar.", "translation": "Ya Rabb, aku berlindung kepada-Mu dari kemalasan dan buruknya masa tua."},
+        {"arabic": "رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ", "latin": "Rabbi a'ūżu bika min 'ażābin fin-nāri wa 'ażābin fil-qabr.", "translation": "Ya Rabb, aku berlindung kepada-Mu dari azab neraka dan azab kubur."}
+      ]
     },
     "bika_ashbahna": {
       "arabic": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ",
@@ -36,7 +68,16 @@
     "sayyidul_istighfar": {
       "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
       "latin": "Allāhumma anta rabbī lā ilāha illā anta, khalaqtanī wa ana 'abduk, wa ana 'alā 'ahdika wa wa'dika mastaṭa't, a'ūżu bika min syarri mā ṣana't, abū'u laka bini'matika 'alayya, wa abū'u biżambī fagfir lī, fa innahū lā yagfiruż-żunūba illā anta.",
-      "translation": "Ya Allah, Engkau Rabbku, tidak ada tuhan selain Engkau. Engkau menciptakanku dan aku hamba-Mu. Aku berpegang pada janji-Mu semampuku. Aku berlindung kepada-Mu dari keburukan perbuatanku. Aku mengakui nikmat-Mu kepadaku dan mengakui dosaku, maka ampunilah aku, karena tidak ada yang mengampuni dosa selain Engkau."
+      "translation": "Ya Allah, Engkau Rabbku, tidak ada tuhan selain Engkau. Engkau menciptakanku dan aku hamba-Mu. Aku berpegang pada janji-Mu semampuku. Aku berlindung kepada-Mu dari keburukan perbuatanku. Aku mengakui nikmat-Mu kepadaku dan mengakui dosaku, maka ampunilah aku, karena tidak ada yang mengampuni dosa selain Engkau.",
+      "segments": [
+        {"arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ،", "latin": "Allāhumma anta rabbī lā ilāha illā anta,", "translation": "Ya Allah, Engkau Rabbku, tidak ada tuhan selain Engkau."},
+        {"arabic": "خَلَقْتَنِي وَأَنَا عَبْدُكَ،", "latin": "khalaqtanī wa ana 'abduk,", "translation": "Engkau menciptakanku dan aku hamba-Mu."},
+        {"arabic": "وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ،", "latin": "wa ana 'alā 'ahdika wa wa'dika mastaṭa't,", "translation": "Aku berpegang pada janji-Mu semampuku."},
+        {"arabic": "أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ،", "latin": "a'ūżu bika min syarri mā ṣana't,", "translation": "Aku berlindung kepada-Mu dari keburukan perbuatanku."},
+        {"arabic": "أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ،", "latin": "abū'u laka bini'matika 'alayya,", "translation": "Aku mengakui nikmat-Mu kepadaku"},
+        {"arabic": "وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي،", "latin": "wa abū'u biżambī fagfir lī,", "translation": "dan mengakui dosaku, maka ampunilah aku,"},
+        {"arabic": "فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ", "latin": "fa innahū lā yagfiruż-żunūba illā anta.", "translation": "karena tidak ada yang mengampuni dosa selain Engkau."}
+      ]
     },
     "bismillah_la_yadhurru": {
       "arabic": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
@@ -91,7 +132,13 @@
     "la_mania": {
       "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ، وَلَا مُعْطِيَ لِمَا مَنَعْتَ، وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ",
       "latin": "Lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamd, wa huwa 'alā kulli syai'in qadīr. Allāhumma lā māni'a limā a'ṭaita, wa lā mu'ṭiya limā mana't, wa lā yanfa'u żal-jaddi minkal-jadd.",
-      "translation": "Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Ya Allah, tidak ada yang dapat menghalangi apa yang Engkau berikan, tidak ada yang dapat memberi apa yang Engkau tahan, dan kekayaan tidak berguna bagi pemiliknya di hadapan-Mu."
+      "translation": "Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu. Ya Allah, tidak ada yang dapat menghalangi apa yang Engkau berikan, tidak ada yang dapat memberi apa yang Engkau tahan, dan kekayaan tidak berguna bagi pemiliknya di hadapan-Mu.",
+      "segments": [
+        {"arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ،", "latin": "Lā ilāha illallāhu waḥdahū lā syarīka lah, lahul-mulku wa lahul-ḥamd, wa huwa 'alā kulli syai'in qadīr.", "translation": "Tidak ada tuhan selain Allah semata, tiada sekutu bagi-Nya; milik-Nya kerajaan dan pujian, dan Dia Mahakuasa atas segala sesuatu."},
+        {"arabic": "اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ،", "latin": "Allāhumma lā māni'a limā a'ṭaita,", "translation": "Ya Allah, tidak ada yang dapat menghalangi apa yang Engkau berikan,"},
+        {"arabic": "وَلَا مُعْطِيَ لِمَا مَنَعْتَ،", "latin": "wa lā mu'ṭiya limā mana't,", "translation": "tidak ada yang dapat memberi apa yang Engkau tahan,"},
+        {"arabic": "وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ", "latin": "wa lā yanfa'u żal-jaddi minkal-jadd.", "translation": "dan kekayaan tidak berguna bagi pemiliknya di hadapan-Mu."}
+      ]
     },
     "subhanallah": {
       "arabic": "سُبْحَانَ اللَّهِ",

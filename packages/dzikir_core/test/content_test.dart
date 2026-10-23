@@ -19,6 +19,15 @@ void main() {
     ]);
   });
 
+  test('every read-mode text is split into parts', () {
+    for (final collection in library.collections) {
+      for (final entry in collection.entries) {
+        if (entry.mode != DzikirMode.read) continue;
+        expect(entry.text.segments, isNotEmpty, reason: entry.text.id);
+      }
+    }
+  });
+
   test('every entry names its evidence', () {
     for (final collection in library.collections) {
       for (final entry in collection.entries) {
