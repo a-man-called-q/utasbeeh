@@ -609,45 +609,27 @@ class _ReadView extends StatelessWidget {
 /// One sentence on screen, everything else out of sight, so the eye has a
 /// single place to rest. Tap anywhere for the next sentence; tapping the
 /// last counts one recitation and starts the text over if more are due.
-class _SentenceView extends StatefulWidget {
+///
+/// The sentence lives in the session, so it is saved with the progress and
+/// survives closing the app.
+class _SentenceView extends StatelessWidget {
   const _SentenceView({required this.controller});
 
   final DzikirSessionController controller;
 
-  @override
-  State<_SentenceView> createState() => _SentenceViewState();
-}
-
-class _SentenceViewState extends State<_SentenceView> {
-  int _index = 0;
-
-  DzikirSessionController get controller => widget.controller;
-
-  void _next() {
-    final parts = controller.session.currentEntry.text.segments;
-    if (_index < parts.length - 1) {
-      setState(() => _index++);
-      controller.nudge();
-      return;
-    }
-    controller.increment();
-    setState(() => _index = 0);
-  }
-
-  void _previous() {
-    if (_index == 0) return;
-    setState(() => _index--);
-    controller.nudge();
-  }
+  void _next() => controller.session.canGoForwardPart
+      ? controller.nextPart()
+      : controller.increment();
 
   @override
   Widget build(BuildContext context) {
     final session = controller.session;
     final entry = session.currentEntry;
     final parts = entry.text.segments;
-    final part = parts[_index];
+    final index = session.part;
+    final part = parts[index];
     final target = entry.target ?? 1;
-    final isLast = _index == parts.length - 1;
+    final isLast = !session.canGoForwardPart;
 
     final caption = TextStyler()
         .style(AppText.caption.mix())
@@ -670,7 +652,7 @@ class _SentenceViewState extends State<_SentenceView> {
             },
             child: Center(
               child: SingleChildScrollView(
-                key: ValueKey(_index),
+                key: ValueKey(index),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 28,
                   vertical: 16,
@@ -699,7 +681,7 @@ class _SentenceViewState extends State<_SentenceView> {
               : 'Dibaca 1×',
         ),
         const SizedBox(height: 10),
-        _SentenceDots(count: parts.length, current: _index),
+        _SentenceDots(count: parts.length, current: index),
         Expanded(child: stage),
         caption(
           isLast
@@ -716,18 +698,15 @@ class _SentenceViewState extends State<_SentenceView> {
               _PillButton(
                 label: '‹ Kalimat',
                 semanticsLabel: 'Kalimat sebelumnya',
-                onPressed: _index > 0 ? _previous : null,
+                onPressed: session.canGoBackPart
+                    ? controller.previousPart
+                    : null,
               ),
               const SizedBox(width: 12),
               _PillButton(
                 label: '−1',
                 semanticsLabel: 'Kurangi satu hitungan',
-                onPressed: session.canDecrement
-                    ? () {
-                        controller.decrement();
-                        setState(() => _index = 0);
-                      }
-                    : null,
+                onPressed: session.canDecrement ? controller.decrement : null,
               ),
             ],
           ),

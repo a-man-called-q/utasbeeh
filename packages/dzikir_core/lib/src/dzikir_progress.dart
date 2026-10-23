@@ -7,6 +7,7 @@ final class DzikirProgress {
     required this.count,
     required this.updatedAt,
     this.counts,
+    this.part = 0,
   });
 
   factory DzikirProgress.fromJson(Map<String, Object?> json) {
@@ -15,7 +16,9 @@ final class DzikirProgress {
     final count = json['count'];
     final updatedAt = DateTime.tryParse(json['updatedAt'] as String? ?? '');
     final counts = json['counts'];
+    final part = json['part'] ?? 0;
     if (collectionId is! String ||
+        part is! int ||
         entryIndex is! int ||
         count is! int ||
         updatedAt == null ||
@@ -28,6 +31,7 @@ final class DzikirProgress {
       count: count,
       updatedAt: updatedAt,
       counts: counts == null ? null : List<int>.unmodifiable(counts as List),
+      part: part,
     );
   }
 
@@ -44,11 +48,16 @@ final class DzikirProgress {
   /// done).
   final List<int>? counts;
 
+  /// Sentence reached within the current entry's text, for texts read one
+  /// sentence at a time.
+  final int part;
+
   Map<String, Object?> toJson() => {
     'collectionId': collectionId,
     'entryIndex': entryIndex,
     'count': count,
     'updatedAt': updatedAt.toIso8601String(),
     'counts': ?counts,
+    if (part != 0) 'part': part,
   };
 }

@@ -25,8 +25,9 @@ enum DzikirEvent {
 ///
 /// Counting moves forward on its own. A sequence can also be stepped through
 /// by hand ([previous], [next]) and a stray count taken back ([decrement]);
-/// each entry keeps its own count, and every change can be persisted through
-/// [progress].
+/// each entry keeps its own count. A text split into sentences is read one
+/// part at a time ([nextPart], [previousPart]). Every change can be persisted
+/// through [progress].
 final class DzikirSession {
   /// A sequence such as dzikir pagi. Restores [resume] when it still applies
   /// (see [canResume]).
@@ -63,10 +64,15 @@ final class DzikirSession {
 
   final List<int> _counts;
   int _entryIndex = 0;
+  int _part = 0;
   bool _complete = false;
 
   int get entryIndex => _entryIndex;
   int get count => _counts[_entryIndex];
+
+  /// The sentence being read in the current entry; 0 for unsplit texts.
+  int get part => _part;
+  int get _lastPart => currentEntry.text.segments.length - 1;
   bool get isComplete => _complete;
   DzikirEntry get currentEntry => collection.entries[_entryIndex];
 
@@ -90,6 +96,8 @@ final class DzikirSession {
   bool get canGoBack => !_openEnded && !_complete && _entryIndex > 0;
   bool get canGoForward => !_openEnded && !_complete && !_isLast;
   bool get canDecrement => !(_complete && !_openEnded) && count > 0;
+  bool get canGoBackPart => _part > 0;
+  bool get canGoForwardPart => !(_complete && !_openEnded) && _part < _lastPart;
 
   DzikirEvent increment() {
     if (_complete && !_openEnded) return DzikirEvent.ignored;
@@ -100,6 +108,8 @@ final class DzikirSession {
     if (!_openEnded && target != null && count >= target) return _advance();
 
     _counts[_entryIndex]++;
+    // A recitation is done: the next one starts from the first sentence.
+    _part = 0;
     if (target != null && count == target) {
       if (_openEnded) {
         _complete = true;
@@ -113,6 +123,7 @@ final class DzikirSession {
   }
 
   DzikirEvent _advance() {
+    _part = 0;
     if (_isLast) {
       _complete = true;
       return DzikirEvent.sessionCompleted;
@@ -126,6 +137,7 @@ final class DzikirSession {
   bool decrement() {
     if (!canDecrement) return false;
     _counts[_entryIndex]--;
+    _part = 0;
     final target = currentEntry.target;
     // Free tasbih may cross its target again and should say so again.
     if (_openEnded && target != null && count < target) _complete = false;
@@ -136,6 +148,7 @@ final class DzikirSession {
   bool previous() {
     if (!canGoBack) return false;
     _entryIndex--;
+    _part = 0;
     return true;
   }
 
@@ -144,6 +157,21 @@ final class DzikirSession {
   bool next() {
     if (!canGoForward) return false;
     _entryIndex++;
+    _part = 0;
+    return true;
+  }
+
+  /// On to the next sentence of the current text. Reading past the last one
+  /// is a count: [increment].
+  bool nextPart() {
+    if (!canGoForwardPart) return false;
+    _part++;
+    return true;
+  }
+
+  bool previousPart() {
+    if (!canGoBackPart) return false;
+    _part--;
     return true;
   }
 
@@ -157,6 +185,7 @@ final class DzikirSession {
       count: count,
       updatedAt: now ?? DateTime.now(),
       counts: _openEnded ? null : List.unmodifiable(_counts),
+      part: _part,
     );
   }
 
@@ -206,6 +235,9 @@ final class DzikirSession {
       }
       _counts[_entryIndex] = progress.count;
     }
+    // Content may have been re-split since; an unknown sentence starts over.
+    final part = progress.part;
+    _part = part >= 0 && part <= _lastPart ? part : 0;
     final target = currentEntry.target;
     _complete = _openEnded && target != null && count >= target;
   }

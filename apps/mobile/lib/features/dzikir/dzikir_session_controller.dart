@@ -61,6 +61,11 @@ class DzikirSessionController extends ChangeNotifier {
 
   void next() => _step(session.next());
 
+  /// Next sentence of a text read one part at a time.
+  void nextPart() => _step(session.nextPart());
+
+  void previousPart() => _step(session.previousPart());
+
   void _step(bool changed) {
     if (!changed) return;
     _lastEvent = null;

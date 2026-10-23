@@ -155,6 +155,82 @@ void main() {
     });
   });
 
+  group('sentences', () {
+    const parted = DzikirText(
+      id: 'p',
+      arabic: 'سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ',
+      latin: 'one two three',
+      translation: 'x',
+      segments: [
+        DzikirSegment(arabic: 'سُبْحَانَ', latin: 'one'),
+        DzikirSegment(arabic: 'اللَّهِ', latin: 'two'),
+        DzikirSegment(arabic: 'وَالْحَمْدُ لِلَّهِ', latin: 'three'),
+      ],
+    );
+    DzikirCollection reading() => DzikirCollection(
+      id: 'r',
+      title: 'Reading',
+      kind: DzikirCollectionKind.sequence,
+      entries: [
+        DzikirEntry(text: parted, target: 2, source: 'test'),
+        _entry('after', 1),
+      ],
+    );
+
+    test('step through parts; reading past the last is a count', () {
+      final session = DzikirSession(reading(), now: _now);
+      expect(session.canGoBackPart, isFalse);
+      expect(session.nextPart(), isTrue);
+      expect(session.nextPart(), isTrue);
+      expect(session.part, 2);
+      expect(session.nextPart(), isFalse, reason: 'last part');
+
+      expect(session.increment(), DzikirEvent.counted);
+      expect(session.part, 0, reason: 'next recitation starts over');
+    });
+
+    test('taking back a count or changing entry starts the text over', () {
+      final session = DzikirSession(reading(), now: _now)
+        ..increment()
+        ..nextPart();
+      expect(session.decrement(), isTrue);
+      expect(session.part, 0);
+
+      session
+        ..nextPart()
+        ..next();
+      expect(session.part, 0);
+      session.previous();
+      expect(session.part, 0);
+    });
+
+    test('the sentence survives a restart', () {
+      final first = DzikirSession(reading(), now: _now)
+        ..nextPart()
+        ..nextPart();
+      final saved = DzikirProgress.fromJson(
+        first.progress(now: _now)!.toJson(),
+      );
+      expect(saved.part, 2);
+
+      final resumed = DzikirSession(reading(), resume: saved, now: _now);
+      expect(resumed.part, 2);
+    });
+
+    test('a sentence the text no longer has starts over', () {
+      final stale = DzikirProgress(
+        collectionId: 'r',
+        entryIndex: 0,
+        count: 0,
+        updatedAt: _now,
+        counts: const [0, 0],
+        part: 9,
+      );
+      final session = DzikirSession(reading(), resume: stale, now: _now);
+      expect(session.part, 0);
+    });
+  });
+
   group('free tasbih', () {
     test('keeps counting after the target, completing only once', () {
       final session = DzikirSession.free(_entry('subhanallah', 33));

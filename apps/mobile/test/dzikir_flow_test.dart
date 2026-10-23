@@ -143,6 +143,24 @@ void main() {
     expect(find.text('Part one,'), findsOneWidget, reason: 'starts over');
   });
 
+  testWidgets('the sentence is saved and restored on reopen', (tester) async {
+    final h = DzikirHarness();
+    await openDzikirTab(tester, h);
+    await tester.tap(find.text('Bacaan bertahap'));
+    await tester.pumpAndSettle();
+
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    expect(find.text('part two'), findsOneWidget);
+    expect(h.store.progress['bertahap']?.part, 1);
+
+    await tester.tap(find.byTooltip('Tutup'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Bacaan bertahap'));
+    await tester.pumpAndSettle();
+    expect(find.text('part two'), findsOneWidget);
+  });
+
   testWidgets('display setting hides Latin and meaning', (tester) async {
     final h = DzikirHarness();
     h.services.settings.layers = DzikirTextLayers.arabic;
