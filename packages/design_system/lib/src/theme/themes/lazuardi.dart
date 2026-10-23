@@ -3,12 +3,11 @@ import 'package:flutter/widgets.dart';
 import '../app_theme.dart';
 import '../palette.dart';
 
-/// Premium sample theme: lapis blue with gold. Also serves as the reference
-/// for how a paid theme is declared.
+/// Lapis blue with gold. Free, like Mushaf: both launch themes are open to
+/// everyone. A paid theme would add `isPremium: true`.
 const lazuardiTheme = AppTheme(
   id: 'lazuardi',
   name: 'Lazuardi',
-  isPremium: true,
   light: Palette(
     brightness: Brightness.light,
     surfacePage: Color(0xFFEEF1F6),

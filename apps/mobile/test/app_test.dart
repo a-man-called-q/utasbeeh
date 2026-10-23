@@ -4,9 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'support/dzikir_fixture.dart';
 
 void main() {
-  testWidgets('appearance previews a locked theme without selecting it', (
-    tester,
-  ) async {
+  testWidgets('appearance switches between both free themes', (tester) async {
     final controller = ThemeController(mode: AppThemeMode.light);
     await tester.pumpWidget(DzikirHarness().app(themeController: controller));
 
@@ -15,12 +13,10 @@ void main() {
 
     await tester.tap(find.text(lazuardiTheme.name));
     await tester.pump();
+    expect(controller.isPreviewing, isFalse);
+    expect(controller.activeTheme, lazuardiTheme);
 
-    expect(controller.isPreviewing, isTrue);
-    expect(controller.selectedTheme, mushafTheme);
-    expect(find.text('Selesai pratinjau'), findsOneWidget);
-
-    await tester.tap(find.text('Selesai pratinjau'));
+    await tester.tap(find.text(mushafTheme.name));
     await tester.pump();
     expect(controller.activeTheme, mushafTheme);
 

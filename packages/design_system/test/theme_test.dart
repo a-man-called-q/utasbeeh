@@ -2,6 +2,16 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// Both launch themes are free, so locking is exercised with a paid stand-in.
+final _premiumTheme = AppTheme(
+  id: 'test-premium',
+  name: 'Premium',
+  isPremium: true,
+  light: lazuardiTheme.light,
+  dark: lazuardiTheme.dark,
+);
+final _registry = ThemeRegistry([mushafTheme, _premiumTheme]);
+
 void main() {
   group('ThemeRegistry.builtIn', () {
     final registry = ThemeRegistry.builtIn;
@@ -29,18 +39,23 @@ void main() {
       expect(registry.fallback, mushafTheme);
       expect(registry.fallback.isPremium, isFalse);
     });
+
+    test('both launch themes are free', () {
+      expect(registry.themes, [mushafTheme, lazuardiTheme]);
+      expect(registry.themes.where((t) => t.isPremium), isEmpty);
+    });
   });
 
   group('ThemeController', () {
     test('locked themes cannot be selected but can be previewed', () {
-      final controller = ThemeController();
+      final controller = ThemeController(registry: _registry);
 
-      expect(controller.select(lazuardiTheme.id), isFalse);
+      expect(controller.select(_premiumTheme.id), isFalse);
       expect(controller.activeTheme, mushafTheme);
 
-      controller.preview(lazuardiTheme.id);
+      controller.preview(_premiumTheme.id);
       expect(controller.isPreviewing, isTrue);
-      expect(controller.activeTheme, lazuardiTheme);
+      expect(controller.activeTheme, _premiumTheme);
       expect(controller.selectedTheme, mushafTheme);
 
       controller.endPreview();
@@ -48,26 +63,30 @@ void main() {
     });
 
     test('unlocked premium themes can be selected', () {
-      final controller = ThemeController()
-        ..setUnlockedThemes({lazuardiTheme.id});
+      final controller = ThemeController(registry: _registry)
+        ..setUnlockedThemes({_premiumTheme.id});
 
-      expect(controller.select(lazuardiTheme.id), isTrue);
-      expect(controller.activeTheme, lazuardiTheme);
+      expect(controller.select(_premiumTheme.id), isTrue);
+      expect(controller.activeTheme, _premiumTheme);
     });
 
     test('losing an entitlement falls back to the free theme', () {
       final controller = ThemeController(
-        selectedThemeId: lazuardiTheme.id,
-        unlockedThemeIds: {lazuardiTheme.id},
+        registry: _registry,
+        selectedThemeId: _premiumTheme.id,
+        unlockedThemeIds: {_premiumTheme.id},
       );
-      expect(controller.activeTheme, lazuardiTheme);
+      expect(controller.activeTheme, _premiumTheme);
 
       controller.setUnlockedThemes({});
       expect(controller.activeTheme, mushafTheme);
     });
 
     test('unknown ids are ignored', () {
-      final controller = ThemeController(selectedThemeId: 'gone');
+      final controller = ThemeController(
+        registry: _registry,
+        selectedThemeId: 'gone',
+      );
 
       expect(controller.activeTheme, mushafTheme);
       expect(controller.select('nope'), isFalse);
