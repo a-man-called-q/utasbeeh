@@ -5,8 +5,9 @@ enum GlassMode {
   /// frosted look automatically.
   liquid,
 
-  /// Plain backdrop blur, independent of `liquid_glass_renderer`. The escape
-  /// hatch if the renderer is ever dropped.
+  /// Backdrop blur with a top sheen, independent of `liquid_glass_renderer`.
+  /// The default: it looks the same on every platform and never refracts
+  /// the text behind it.
   frosted,
 
   /// No transparency. Backs the "reduce glass effect" setting.

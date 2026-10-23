@@ -35,12 +35,36 @@ class GlassSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     final scope = AppThemeScope.of(context);
     final tint = AppColors.glassTint.resolve(context);
+    final edge = AppColors.glassEdge.resolve(context);
+    final shade = AppColors.glassShade.resolve(context);
     final content = Padding(padding: padding, child: child);
-    final grouped = BackdropGroup.of(context) != null;
-    final blur = ImageFilter.blur(sigmaX: 16, sigmaY: 16);
-    final frostedFill = DecoratedBox(
-      decoration: _decoration(context, tint),
+    final rimmed = CustomPaint(
+      foregroundPainter: _RimPainter(shape: _shape, top: edge, bottom: shade),
       child: content,
+    );
+    final grouped = BackdropGroup.of(context) != null;
+    final blur = ImageFilter.blur(sigmaX: 24, sigmaY: 24);
+    // Tint first, then a sheen: light catching the top, shade pooling at the
+    // bottom. Without the shade, pale glass on a pale page reads as a flat
+    // translucent chip.
+    final frostedFill = DecoratedBox(
+      decoration: ShapeDecoration(color: tint, shape: _shape),
+      child: DecoratedBox(
+        decoration: ShapeDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0, 0.55, 1],
+            colors: [
+              edge.withValues(alpha: edge.a * 0.35),
+              edge.withValues(alpha: 0),
+              shade.withValues(alpha: shade.a * 0.5),
+            ],
+          ),
+          shape: _shape,
+        ),
+        child: rimmed,
+      ),
     );
 
     return switch (scope.glassMode) {
@@ -66,25 +90,47 @@ class GlassSurface extends StatelessWidget {
             : BackdropFilter(filter: blur, child: frostedFill),
       ),
       GlassMode.solid => DecoratedBox(
-        decoration: _decoration(
-          context,
-          AppColors.surfaceRaised.resolve(context),
+        decoration: ShapeDecoration(
+          color: AppColors.surfaceRaised.resolve(context),
+          shape: _shape,
         ),
-        child: content,
+        child: rimmed,
       ),
     };
   }
 
-  ShapeDecoration _decoration(BuildContext context, Color fill) {
-    return ShapeDecoration(
-      color: fill,
-      shape: RoundedSuperellipseBorder(
-        borderRadius: BorderRadius.circular(radius),
-        side: BorderSide(
-          color: AppColors.glassEdge.resolve(context),
-          width: 0.5,
-        ),
-      ),
-    );
+  RoundedSuperellipseBorder get _shape =>
+      RoundedSuperellipseBorder(borderRadius: BorderRadius.circular(radius));
+}
+
+/// A 1px rim that runs from [top] to [bottom], drawn just inside the shape so
+/// the frosted clip doesn't cut it in half.
+class _RimPainter extends CustomPainter {
+  const _RimPainter({
+    required this.shape,
+    required this.top,
+    required this.bottom,
+  });
+
+  final ShapeBorder shape;
+  final Color top;
+  final Color bottom;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bounds = Offset.zero & size;
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [top, bottom],
+      ).createShader(bounds);
+    canvas.drawPath(shape.getOuterPath(bounds.deflate(0.5)), paint);
   }
+
+  @override
+  bool shouldRepaint(_RimPainter old) =>
+      old.shape != shape || old.top != top || old.bottom != bottom;
 }

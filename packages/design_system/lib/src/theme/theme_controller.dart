@@ -16,7 +16,7 @@ class ThemeController extends ChangeNotifier {
     ThemeRegistry? registry,
     String? selectedThemeId,
     this._mode = AppThemeMode.system,
-    this._glassMode = GlassMode.liquid,
+    this._glassMode = GlassMode.frosted,
     this._darkSessions = true,
     Set<String> unlockedThemeIds = const {},
   }) : registry = registry ?? ThemeRegistry.builtIn,

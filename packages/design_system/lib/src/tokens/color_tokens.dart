@@ -33,8 +33,13 @@ abstract final class AppColors {
   /// Tint applied to glass surfaces so glass follows the active theme.
   static const glassTint = ColorToken('glass.tint');
 
-  /// Hairline drawn around glass in frosted/solid modes.
+  /// Upper end of the glass rim in frosted/solid modes; also colors the
+  /// frosted sheen.
   static const glassEdge = ColorToken('glass.edge');
+
+  /// Lower end of the glass rim and sheen. Dark in light palettes so glass
+  /// keeps a visible edge on pale pages.
+  static const glassShade = ColorToken('glass.shade');
 
   static const ribbonTilawah = ColorToken('ribbon.tilawah');
   static const ribbonHafalan = ColorToken('ribbon.hafalan');
@@ -54,6 +59,7 @@ abstract final class AppColors {
     border,
     glassTint,
     glassEdge,
+    glassShade,
     ribbonTilawah,
     ribbonHafalan,
     ribbonMurajaah,

@@ -23,6 +23,7 @@ class Palette {
     required this.border,
     required this.glassTint,
     required this.glassEdge,
+    required this.glassShade,
     required this.ribbonTilawah,
     required this.ribbonHafalan,
     required this.ribbonMurajaah,
@@ -42,6 +43,7 @@ class Palette {
   final Color border;
   final Color glassTint;
   final Color glassEdge;
+  final Color glassShade;
   final Color ribbonTilawah;
   final Color ribbonHafalan;
   final Color ribbonMurajaah;
@@ -60,6 +62,7 @@ class Palette {
     AppColors.border: border,
     AppColors.glassTint: glassTint,
     AppColors.glassEdge: glassEdge,
+    AppColors.glassShade: glassShade,
     AppColors.ribbonTilawah: ribbonTilawah,
     AppColors.ribbonHafalan: ribbonHafalan,
     AppColors.ribbonMurajaah: ribbonMurajaah,

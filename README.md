@@ -41,10 +41,10 @@ re-exports `mix`).
 - **Themes** (`lib/src/theme/`): an `AppTheme` is a light and a dark `Palette`.
   Themes change color only; type, spacing and radii are shared.
 - **Glass** (`lib/src/glass/`): `GlassSurface` is the only glass widget. It
-  renders as `liquid` (liquid_glass_renderer), `frosted` (plain backdrop blur)
-  or `solid`, per `ThemeController.glassMode`. Use glass for navigation
-  (bars, sheets, the counter bead), never under Qur'an text, and wrap screens
-  with several glass surfaces in a `BackdropGroup`.
+  renders as `frosted` (backdrop blur with a top sheen, the default), `liquid`
+  (liquid_glass_renderer) or `solid`, per `ThemeController.glassMode`. Use
+  glass for navigation (bars, sheets, the counter bead), never under Qur'an
+  text, and wrap screens with several glass surfaces in a `BackdropGroup`.
 
 ### Adding a theme
 
