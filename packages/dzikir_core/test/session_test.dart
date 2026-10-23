@@ -55,6 +55,106 @@ void main() {
     });
   });
 
+  group('stepping and taking back', () {
+    test('previous and next keep each entry\'s count', () {
+      final session = DzikirSession(_sequence(), now: _now)..increment();
+      expect(session.canGoBack, isFalse);
+      expect(session.previous(), isFalse);
+
+      expect(session.next(), isTrue);
+      expect(session.currentEntry.text.id, 'b');
+      expect(session.count, 0);
+      expect(session.completedEntries, 0, reason: 'a was skipped at 1/2');
+
+      expect(session.previous(), isTrue);
+      expect(session.currentEntry.text.id, 'a');
+      expect(session.count, 1);
+    });
+
+    test('next stops at the last entry; finishing takes the target', () {
+      final session = DzikirSession(_sequence(), now: _now)
+        ..next()
+        ..next();
+      expect(session.currentEntry.text.id, 'c');
+      expect(session.canGoForward, isFalse);
+      expect(session.next(), isFalse);
+      expect(session.isComplete, isFalse);
+    });
+
+    test('counting on an entry already done moves on without overshooting', () {
+      final session = DzikirSession(_sequence(), now: _now)
+        ..increment()
+        ..increment();
+      expect(session.currentEntry.text.id, 'b');
+
+      session.previous();
+      expect(session.count, 2);
+      expect(session.increment(), DzikirEvent.entryCompleted);
+      expect(session.currentEntry.text.id, 'b');
+      expect(session.completedEntries, 1);
+    });
+
+    test('decrement takes back one count, never across entries', () {
+      final session = DzikirSession(_sequence(), now: _now);
+      expect(session.canDecrement, isFalse);
+      expect(session.decrement(), isFalse);
+
+      session
+        ..increment()
+        ..increment();
+      expect(session.currentEntry.text.id, 'b');
+      expect(session.decrement(), isFalse, reason: 'b has no counts yet');
+
+      session.previous();
+      expect(session.decrement(), isTrue);
+      expect(session.count, 1);
+      expect(session.completedEntries, 0);
+    });
+
+    test('free tasbih completes again after a count is taken back', () {
+      final session = DzikirSession.free(_entry('x', 2), now: _now);
+      expect(session.canGoBack || session.canGoForward, isFalse);
+
+      session.increment();
+      expect(session.increment(), DzikirEvent.sessionCompleted);
+      expect(session.decrement(), isTrue);
+      expect(session.isComplete, isFalse);
+      expect(session.increment(), DzikirEvent.sessionCompleted);
+    });
+
+    test('progress keeps every entry\'s count', () {
+      final first = DzikirSession(_sequence(), now: _now)
+        ..increment()
+        ..next()
+        ..next()
+        ..increment();
+      final saved = DzikirProgress.fromJson(
+        first.progress(now: _now)!.toJson(),
+      );
+      expect(saved.counts, [1, 0, 1]);
+
+      final resumed = DzikirSession(_sequence(), resume: saved, now: _now);
+      expect(resumed.currentEntry.text.id, 'c');
+      expect(resumed.count, 1);
+      resumed
+        ..previous()
+        ..previous();
+      expect(resumed.count, 1);
+    });
+
+    test('progress saved before navigation treats earlier entries as done', () {
+      final old = DzikirProgress(
+        collectionId: 'seq',
+        entryIndex: 2,
+        count: 5,
+        updatedAt: _now,
+      );
+      final session = DzikirSession(_sequence(), resume: old, now: _now);
+      expect(session.count, 5);
+      expect(session.completedEntries, 2);
+    });
+  });
+
   group('free tasbih', () {
     test('keeps counting after the target, completing only once', () {
       final session = DzikirSession.free(_entry('subhanallah', 33));
