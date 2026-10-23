@@ -28,13 +28,14 @@ void main() {
     expect(find.text('Dzikir pagi'), findsOneWidget);
   });
 
-  testWidgets("the Qur'an card switches to the Qur'an tab", (tester) async {
+  testWidgets("the Qur'an row switches to the Qur'an tab", (tester) async {
     await tester.pumpWidget(DzikirHarness().app());
+    expect(find.text('2 surah'), findsOneWidget);
 
-    await tester.tap(find.text('Al-Fātiḥah'));
+    await tester.tap(find.text("Al-Qur'an"));
     await tester.pump();
-    expect(find.text('Pratinjau pembaca'), findsOneWidget);
-    expect(find.text('Pembukaan'), findsOneWidget);
+    expect(find.text('1. Al-Fātiḥah'), findsOneWidget);
+    expect(find.text('SURAH'), findsOneWidget);
   });
 
   group('session brightness', () {

@@ -389,12 +389,6 @@ class _PillButton extends StatelessWidget {
   }
 }
 
-/// Uthmani text puts a space before each pause sign (ۖ ۗ ۚ …), so a sign at
-/// the end of a line or sentence lands on that space and floats loose. A
-/// mushaf prints it over the end of the word before it, so join it there.
-String attachWaqfMarks(String arabic) =>
-    arabic.replaceAllMapped(RegExp('\\s+([\u06D6-\u06DC])'), (m) => m[1]!);
-
 /// Arabic first and largest; Latin smaller, in italic serif and the
 /// secondary ink; the meaning last, in plain sans and the faintest ink. Which lines show follows
 /// [DzikirSettings.layers]; the Arabic size follows its size setting.

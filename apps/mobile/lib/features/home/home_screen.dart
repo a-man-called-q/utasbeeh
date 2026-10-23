@@ -5,16 +5,22 @@ import 'package:flutter/material.dart';
 import '../dzikir/dzikir_list_screen.dart';
 import '../dzikir/dzikir_services.dart';
 import '../dzikir/dzikir_status.dart';
+import '../quran/quran_library.dart';
+import '../quran/quran_store.dart';
 
 /// "Today": the dzikir that fits the hour, the Qur'an, free tasbih.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required this.services,
+    required this.quranLibrary,
+    required this.quranStore,
     required this.onOpenQuran,
   });
 
   final DzikirServices services;
+  final QuranLibrary quranLibrary;
+  final QuranStore quranStore;
   final VoidCallback onOpenQuran;
 
   @override
@@ -99,17 +105,28 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 56),
             overline('LAINNYA'),
             const SizedBox(height: 12),
-            AppListRow(
-              title: 'Al-Fātiḥah',
-              subtitle: 'Pratinjau pembaca · Hal. 1',
-              first: true,
-              trailing: TextStyler()
-                  .style(AppText.ayah.mix())
-                  .fontSize(21)
-                  .height(1.4)
-                  .color(AppColors.inkAyah())
-                  .textDirection(TextDirection.rtl)('بِسْمِ ٱللَّهِ'),
-              onPress: widget.onOpenQuran,
+            ListenableBuilder(
+              listenable: widget.quranStore,
+              builder: (context, _) {
+                final last = widget.quranStore.lastRead;
+                final surah = last == null
+                    ? null
+                    : widget.quranLibrary.surah(last.surah);
+                return AppListRow(
+                  title: "Al-Qur'an",
+                  subtitle: last == null || surah == null
+                      ? '${widget.quranLibrary.surahs.length} surah'
+                      : 'Lanjutkan ${surah.name} ${last.surah}:${last.ayah}',
+                  first: true,
+                  trailing: TextStyler()
+                      .style(AppText.ayah.mix())
+                      .fontSize(21)
+                      .height(1.4)
+                      .color(AppColors.inkAyah())
+                      .textDirection(TextDirection.rtl)('بِسْمِ ٱللَّهِ'),
+                  onPress: widget.onOpenQuran,
+                );
+              },
             ),
             for (final collection in presets)
               AppListRow(

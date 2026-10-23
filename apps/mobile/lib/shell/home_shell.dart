@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import '../features/dzikir/dzikir_list_screen.dart';
 import '../features/dzikir/dzikir_services.dart';
 import '../features/home/home_screen.dart';
-import '../features/quran/quran_preview_screen.dart';
+import '../features/quran/quran_library.dart';
+import '../features/quran/quran_screen.dart';
 import '../features/quran/quran_store.dart';
 import '../features/settings/settings_screen.dart';
 
@@ -20,9 +21,15 @@ const List<_Tab> _tabs = [
 /// The four tabs under one floating glass tab bar. Tab content scrolls
 /// behind the bar so the glass has something to bend.
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key, required this.services, required this.quran});
+  const HomeShell({
+    super.key,
+    required this.services,
+    required this.quranLibrary,
+    required this.quran,
+  });
 
   final DzikirServices services;
+  final QuranLibrary quranLibrary;
   final QuranStore quran;
 
   /// Height the bar takes above the bottom safe area, including its gap.
@@ -61,10 +68,15 @@ class _HomeShellState extends State<HomeShell> {
                 children: [
                   HomeScreen(
                     services: widget.services,
+                    quranLibrary: widget.quranLibrary,
+                    quranStore: widget.quran,
                     onOpenQuran: () => _select(2),
                   ),
                   DzikirListScreen(services: widget.services),
-                  QuranPreviewScreen(store: widget.quran),
+                  QuranScreen(
+                    library: widget.quranLibrary,
+                    store: widget.quran,
+                  ),
                   SettingsScreen(settings: widget.services.settings),
                 ],
               ),

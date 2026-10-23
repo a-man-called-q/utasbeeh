@@ -28,4 +28,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/branding/tasbeeh-icon.png
+    - assets/quran/quran-uthmani.txt
+    - assets/quran/en.pickthall.txt
     - packages/dzikir_core/content/dzikir.json

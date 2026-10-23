@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tasbeeh/app.dart';
 import 'package:tasbeeh/features/dzikir/dzikir_progress_store.dart';
 import 'package:tasbeeh/features/dzikir/dzikir_services.dart';
+import 'package:tasbeeh/features/quran/quran_library.dart';
 import 'package:tasbeeh/features/quran/quran_store.dart';
 import 'package:tasbeeh/features/settings/settings_store.dart';
 
@@ -41,6 +42,32 @@ const partedText = DzikirText(
     ),
   ],
 );
+
+/// Two short surahs, so reader tests don't parse the whole mushaf.
+final fixtureQuran = QuranLibrary([
+  Surah(
+    number: 1,
+    name: 'Al-Fātiḥah',
+    meaning: 'Pembuka',
+    arabicName: 'الفاتحة',
+    makki: true,
+    ayat: [
+      for (var a = 1; a <= 7; a++)
+        Ayah(number: a, arabic: 'آية $a', translation: 'Fatihah $a'),
+    ],
+  ),
+  Surah(
+    number: 112,
+    name: 'Al-Ikhlāṣ',
+    meaning: 'Ikhlas',
+    arabicName: 'الاخلاص',
+    makki: true,
+    ayat: [
+      for (var a = 1; a <= 4; a++)
+        Ayah(number: a, arabic: 'آية $a', translation: 'Ikhlas $a'),
+    ],
+  ),
+]);
 
 DzikirEntry entry(DzikirText text, int? target) =>
     DzikirEntry(text: text, target: target, source: 'HR. Test');
@@ -123,6 +150,7 @@ class DzikirHarness {
         themeController ??
         ThemeController(mode: AppThemeMode.light, glassMode: GlassMode.solid),
     dzikirServices: services,
+    quranLibrary: fixtureQuran,
     quranStore: quran,
   );
 }

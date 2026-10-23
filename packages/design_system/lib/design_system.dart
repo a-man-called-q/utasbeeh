@@ -20,3 +20,4 @@ export 'src/theme/themes/mushaf.dart';
 export 'src/tokens/color_tokens.dart';
 export 'src/tokens/layout_tokens.dart';
 export 'src/tokens/text_tokens.dart';
+export 'src/typography/arabic.dart';

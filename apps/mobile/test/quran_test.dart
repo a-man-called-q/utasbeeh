@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tasbeeh/features/quran/quran_library.dart';
 import 'package:tasbeeh/features/quran/quran_store.dart';
 import 'package:tasbeeh/features/settings/settings_store.dart';
 
@@ -34,44 +37,86 @@ void main() {
     });
   });
 
+  group('bundled mushaf', () {
+    final library = QuranLibrary.parse(
+      arabic: File(QuranLibrary.arabicAsset).readAsStringSync(),
+      translation: File(QuranLibrary.translationAsset).readAsStringSync(),
+    );
+
+    test('holds every ayah of every surah', () {
+      expect(library.surahs, hasLength(114));
+      expect(library.surahs.fold<int>(0, (n, s) => n + s.ayat.length), 6236);
+      expect(library.surah(2)!.ayat, hasLength(286));
+      expect(library.surah(114)!.ayat, hasLength(6));
+      expect(library.surah(1)!.ayat.first.translation, startsWith('In the'));
+    });
+
+    test('the basmalah heading comes off ayah 1, not the text', () {
+      final basmalah = library.surah(1)!.ayat.first.arabic;
+      String opening(int surah) =>
+          withoutBasmalah(library.surah(surah)!.ayat.first.arabic, basmalah);
+
+      expect(opening(2), 'الٓمٓ');
+      expect(opening(95), isNot(contains('بِسْمِ')), reason: 'shadda form');
+      expect(opening(97), isNot(contains('بِسْمِ')), reason: 'shadda form');
+      expect(opening(9), library.surah(9)!.ayat.first.arabic);
+      expect(library.surah(2)!.ayat.first.arabic, startsWith(basmalah));
+      expect(library.surah(9)!.headedByBasmalah, isFalse);
+    });
+  });
+
   Future<void> openQuran(WidgetTester tester, DzikirHarness h) async {
     await tester.pumpWidget(h.app());
     await tester.tap(find.byKey(const ValueKey('tab-quran')));
     await tester.pumpAndSettle();
   }
 
-  testWidgets('each ayah can be bookmarked on its own', (tester) async {
+  testWidgets('the tab lists surahs and opens one to read', (tester) async {
     final h = DzikirHarness();
     await openQuran(tester, h);
+    expect(find.text('SURAH'), findsOneWidget);
+    expect(find.text('LANJUTKAN MEMBACA'), findsNothing);
+
+    await tester.tap(find.text('1. Al-Fātiḥah'));
+    await tester.pumpAndSettle();
+    expect(find.text('Fatihah 1'), findsOneWidget);
+    expect(find.text('MAKKIYAH · 7 AYAT'), findsOneWidget);
+  });
+
+  testWidgets('bookmarks are per ayah and listed on the tab', (tester) async {
+    final h = DzikirHarness();
+    await openQuran(tester, h);
+    await tester.tap(find.text('112. Al-Ikhlāṣ'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byTooltip('Tandai ayat').first);
     await tester.pump();
-    expect(h.quran.isBookmarked((surah: 1, ayah: 1)), isTrue);
-    expect(h.quran.isBookmarked((surah: 1, ayah: 2)), isFalse);
-    expect(find.byTooltip('Hapus tanda ayat'), findsOneWidget);
+    expect(h.quran.isBookmarked((surah: 112, ayah: 1)), isTrue);
+    expect(h.quran.isBookmarked((surah: 112, ayah: 2)), isFalse);
 
-    await tester.tap(find.byTooltip('Hapus tanda ayat'));
-    await tester.pump();
-    expect(h.quran.isBookmarked((surah: 1, ayah: 1)), isFalse);
+    await tester.tap(find.byTooltip('Kembali'));
+    await tester.pumpAndSettle();
+    expect(find.text('DITANDAI'), findsOneWidget);
+    expect(find.text('Al-Ikhlāṣ 112:1'), findsOneWidget);
   });
 
-  testWidgets('scrolling moves the reading place and saves it', (tester) async {
+  testWidgets('scrolling saves the place and the tab offers to resume', (
+    tester,
+  ) async {
     final h = DzikirHarness();
     await openQuran(tester, h);
-    expect(find.text('Contoh surah · mushaf lengkap menyusul'), findsOneWidget);
-
-    await tester.drag(
-      find.byType(SingleChildScrollView),
-      const Offset(0, -500),
-    );
+    await tester.tap(find.text('1. Al-Fātiḥah'));
     await tester.pumpAndSettle();
 
+    await tester.drag(find.byType(ListView), const Offset(0, -300));
+    await tester.pumpAndSettle();
     final last = h.quran.lastRead;
-    expect(last, isNotNull);
-    expect(last, isNot((surah: 1, ayah: 1)));
-    expect(
-      find.text('Terakhir dibaca · Al-Fātiḥah 1:${last!.ayah}'),
-      findsOneWidget,
-    );
+    expect(last?.surah, 1);
+    expect(last!.ayah, greaterThan(1));
+
+    await tester.tap(find.byTooltip('Kembali'));
+    await tester.pumpAndSettle();
+    expect(find.text('LANJUTKAN MEMBACA'), findsOneWidget);
+    expect(find.text('Ayat ${last.ayah} dari 7'), findsOneWidget);
   });
 }

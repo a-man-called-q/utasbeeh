@@ -5,13 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'app.dart';
 import 'features/dzikir/dzikir_progress_store.dart';
 import 'features/dzikir/dzikir_services.dart';
+import 'features/quran/quran_library.dart';
 import 'features/quran/quran_store.dart';
 import 'features/settings/settings_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final (library, store, settingsBackend, _) = await (
+  final (library, quran, store, settingsBackend, _) = await (
     DzikirServices.loadLibrary(rootBundle),
+    QuranLibrary.load(rootBundle),
     SharedPrefsDzikirProgressStore.open(),
     SharedPrefsSettingsBackend.open(),
     GlassSurface.precache(),
@@ -25,6 +27,7 @@ Future<void> main() async {
         store: store,
         settings: settings.restoreDzikirSettings(),
       ),
+      quranLibrary: quran,
       quranStore: QuranStore(settingsBackend),
     ),
   );
