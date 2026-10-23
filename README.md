@@ -6,7 +6,8 @@ and packages linked by a Dart pub workspace.
 
 ```
 apps/mobile            Flutter app (iOS + Android)
-packages/design_system Mix tokens, themes, GlassSurface
+packages/design_system Mix tokens, themes, fonts, GlassSurface
+packages/dzikir_core   Dzikir content, counter rules, progress (pure Dart)
 ```
 
 ## Setup

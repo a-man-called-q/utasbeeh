@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mix/mix.dart';
 
@@ -65,25 +66,62 @@ class _AppThemeScopeState extends State<AppThemeScope>
       builder: (context, _) {
         final controller = widget.controller;
         final theme = controller.activeTheme;
-        final palette = theme.paletteFor(_brightnessFor(controller.mode));
-        return _ResolvedAppThemeScope(
-          data: ResolvedAppTheme(
+        return _provide(
+          ResolvedAppTheme(
             controller: controller,
             theme: theme,
-            palette: palette,
+            palette: theme.paletteFor(_brightnessFor(controller.mode)),
             glassMode: controller.glassMode,
           ),
-          child: MixScope(
-            colors: palette.tokens,
-            textStyles: AppText.scale,
-            spaces: AppSpace.scale,
-            radii: AppRadius.scale,
-            child: widget.child,
-          ),
+          widget.child,
         );
       },
     );
   }
+}
+
+/// Re-provides the active theme at a fixed brightness for one subtree, e.g.
+/// a dzikir session that stays dark whatever the app's light/dark setting.
+class AppBrightnessOverride extends StatelessWidget {
+  const AppBrightnessOverride({
+    super.key,
+    required this.brightness,
+    required this.child,
+  });
+
+  final Brightness brightness;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final parent = AppThemeScope.of(context);
+    return _provide(
+      ResolvedAppTheme(
+        controller: parent.controller,
+        theme: parent.theme,
+        palette: parent.theme.paletteFor(brightness),
+        glassMode: parent.glassMode,
+      ),
+      child,
+    );
+  }
+}
+
+Widget _provide(ResolvedAppTheme data, Widget child) {
+  final dark = data.brightness == Brightness.dark;
+  return _ResolvedAppThemeScope(
+    data: data,
+    child: MixScope(
+      colors: data.palette.tokens,
+      textStyles: AppText.scale,
+      spaces: AppSpace.scale,
+      radii: AppRadius.scale,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+        child: child,
+      ),
+    ),
+  );
 }
 
 @immutable

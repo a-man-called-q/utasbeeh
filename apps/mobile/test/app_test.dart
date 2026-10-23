@@ -1,16 +1,17 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tasbeeh/app.dart';
+
+import 'support/dzikir_fixture.dart';
 
 void main() {
-  testWidgets('preview switches to a locked theme as a preview only', (
+  testWidgets('appearance previews a locked theme without selecting it', (
     tester,
   ) async {
     final controller = ThemeController(mode: AppThemeMode.light);
-    await tester.pumpWidget(TasbeehApp(themeController: controller));
-    await tester.pump();
+    await tester.pumpWidget(DzikirHarness().app(themeController: controller));
 
-    expect(find.text('Al-Fātiḥah'), findsOneWidget);
+    await tester.tap(find.byTooltip('Tampilan'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text(lazuardiTheme.name));
     await tester.pump();
@@ -22,5 +23,9 @@ void main() {
     await tester.tap(find.text('Selesai pratinjau'));
     await tester.pump();
     expect(controller.activeTheme, mushafTheme);
+
+    await tester.tap(find.text('Ikut mode'));
+    await tester.pump();
+    expect(controller.darkSessions, isFalse);
   });
 }

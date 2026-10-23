@@ -1,16 +1,27 @@
 import 'package:flutter/painting.dart';
 import 'package:mix/mix.dart';
 
-/// Font families. Arabic and Latin are set apart on purpose: mushaf text needs
-/// its own size and line height.
+/// Font families bundled with this package (see `fonts/`). Arabic and Latin
+/// are set apart on purpose: mushaf text needs its own size and line height.
 ///
-/// Fonts are not bundled yet; until they are, Flutter falls back to the
-/// platform font for each family.
+/// UI text uses the platform font (SF Pro / Roboto), so there is no sans
+/// family here.
 abstract final class AppFonts {
-  static const arabic = 'UthmanicHafs';
+  /// Amiri Quran: full Uthmani mark coverage (ٱ, ۥ, waqf signs).
+  static const arabic = 'AmiriQuran';
+
+  /// Newsreader variable font, for titles and translations.
   static const serif = 'Newsreader';
-  static const sans = 'Inter';
+
+  static const package = 'design_system';
 }
+
+/// Newsreader is variable: weight and optical size come from axes, not from
+/// separate files, so set both explicitly to match the requested style.
+List<FontVariation> _serifAxes(double weight, double size) => [
+  FontVariation.weight(weight),
+  FontVariation('opsz', size.clamp(6, 72)),
+];
 
 /// Text style tokens. Sizes and families only — color comes from color tokens
 /// at the call site, so text styles stay identical across themes.
@@ -24,28 +35,35 @@ abstract final class AppText {
   static const counter = TextStyleToken('text.counter');
 
   static final Map<TextStyleToken, TextStyle> scale = {
-    ayah: TextStyle(fontFamily: AppFonts.arabic, fontSize: 26, height: 2.1),
+    ayah: const TextStyle(
+      fontFamily: AppFonts.arabic,
+      package: AppFonts.package,
+      fontSize: 26,
+      height: 2.1,
+    ),
     translation: TextStyle(
       fontFamily: AppFonts.serif,
+      package: AppFonts.package,
       fontSize: 15,
       height: 1.6,
+      fontVariations: _serifAxes(400, 15),
     ),
     title: TextStyle(
       fontFamily: AppFonts.serif,
-      fontSize: 22,
-      height: 1.3,
+      package: AppFonts.package,
+      fontSize: 26,
+      height: 1.25,
       fontWeight: FontWeight.w500,
+      fontVariations: _serifAxes(500, 26),
     ),
-    body: TextStyle(fontFamily: AppFonts.sans, fontSize: 15, height: 1.5),
-    label: TextStyle(
-      fontFamily: AppFonts.sans,
+    body: const TextStyle(fontSize: 15, height: 1.5),
+    label: const TextStyle(
       fontSize: 13,
       height: 1.3,
       fontWeight: FontWeight.w500,
     ),
-    caption: TextStyle(fontFamily: AppFonts.sans, fontSize: 12, height: 1.4),
-    counter: TextStyle(
-      fontFamily: AppFonts.sans,
+    caption: const TextStyle(fontSize: 12, height: 1.4),
+    counter: const TextStyle(
       fontSize: 56,
       height: 1,
       fontWeight: FontWeight.w500,

@@ -17,6 +17,7 @@ class ThemeController extends ChangeNotifier {
     String? selectedThemeId,
     this._mode = AppThemeMode.system,
     this._glassMode = GlassMode.liquid,
+    this._darkSessions = true,
     Set<String> unlockedThemeIds = const {},
   }) : registry = registry ?? ThemeRegistry.builtIn,
        _unlockedIds = {...unlockedThemeIds} {
@@ -30,9 +31,14 @@ class ThemeController extends ChangeNotifier {
   Set<String> _unlockedIds;
   AppThemeMode _mode;
   GlassMode _glassMode;
+  bool _darkSessions;
 
   AppThemeMode get mode => _mode;
   GlassMode get glassMode => _glassMode;
+
+  /// Whether dzikir sessions always use the theme's dark palette, so the
+  /// screen stays dim at night and in the masjid.
+  bool get darkSessions => _darkSessions;
   Set<String> get unlockedThemeIds => Set.unmodifiable(_unlockedIds);
 
   bool isUnlocked(AppTheme theme) =>
@@ -92,6 +98,12 @@ class ThemeController extends ChangeNotifier {
   set glassMode(GlassMode value) {
     if (value == _glassMode) return;
     _glassMode = value;
+    notifyListeners();
+  }
+
+  set darkSessions(bool value) {
+    if (value == _darkSessions) return;
+    _darkSessions = value;
     notifyListeners();
   }
 }

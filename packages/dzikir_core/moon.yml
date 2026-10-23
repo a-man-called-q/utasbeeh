@@ -1,0 +1,31 @@
+language: "dart"
+layer: "library"
+tags: ["dart"]
+
+project:
+  title: "dzikir_core"
+  description: "Dzikir content, counter state machine and progress (pure Dart)."
+
+fileGroups:
+  sources:
+    - "lib/**/*"
+    - "pubspec.yaml"
+    - "analysis_options.yaml"
+  tests:
+    - "test/**/*"
+
+tasks:
+  analyze:
+    command: "dart analyze"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(tests)"]
+
+  format:
+    command: "dart format --output=none --set-exit-if-changed lib test"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(tests)"]
+
+  test:
+    command: "dart test"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(tests)"]

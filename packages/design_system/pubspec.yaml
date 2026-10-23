@@ -19,3 +19,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter:
+  fonts:
+    # Both SIL OFL 1.1; licenses in fonts/OFL-*.txt.
+    - family: AmiriQuran
+      fonts:
+        - asset: fonts/AmiriQuran-Regular.ttf
+    - family: Newsreader
+      fonts:
+        - asset: fonts/Newsreader-Variable.ttf
