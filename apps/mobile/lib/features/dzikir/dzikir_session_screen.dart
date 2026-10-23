@@ -4,11 +4,12 @@ import 'package:design_system/design_system.dart';
 import 'package:dzikir_core/dzikir_core.dart';
 import 'package:flutter/material.dart';
 
+import 'dzikir_services.dart';
 import 'dzikir_session_controller.dart';
 
 /// Runs one session. Each entry renders in its own mode: counted entries
-/// turn the whole screen into the counter, read entries scroll with a done
-/// button. Owns and disposes [controller].
+/// turn the whole screen into the counter, long read entries go one
+/// sentence at a time. Owns and disposes [controller].
 class DzikirSessionScreen extends StatefulWidget {
   const DzikirSessionScreen({super.key, required this.controller});
 
@@ -52,7 +53,7 @@ class _DzikirSessionScreenState extends State<DzikirSessionScreen> {
                   session.collection.kind == DzikirCollectionKind.sequence;
               return Column(
                 children: [
-                  _SessionHeader(session: session),
+                  _SessionHeader(controller: controller),
                   Expanded(
                     child: sequenceDone
                         ? _CompletionView(collection: session.collection)
@@ -83,13 +84,16 @@ class _DzikirSessionScreenState extends State<DzikirSessionScreen> {
   }
 }
 
+/// Close in the middle, previous and next entry at the far edges, so the
+/// three never sit close enough to be confused. None of it counts.
 class _SessionHeader extends StatelessWidget {
-  const _SessionHeader({required this.session});
+  const _SessionHeader({required this.controller});
 
-  final DzikirSession session;
+  final DzikirSessionController controller;
 
   @override
   Widget build(BuildContext context) {
+    final session = controller.session;
     final collection = session.collection;
     final isSequence = collection.kind == DzikirCollectionKind.sequence;
     final total = collection.entries.length;
@@ -102,42 +106,83 @@ class _SessionHeader extends StatelessWidget {
     final target = session.currentEntry.target;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
       child: Column(
         children: [
           Row(
             children: [
-              IconButton(
+              if (isSequence)
+                _HeaderButton(
+                  glyph: AppGlyph.chevronLeft,
+                  tooltip: 'Bacaan sebelumnya',
+                  onPressed: session.canGoBack ? controller.previous : null,
+                )
+              else
+                const SizedBox(width: _HeaderButton.size),
+              const Spacer(),
+              _HeaderButton(
+                glyph: AppGlyph.close,
                 tooltip: 'Tutup',
                 onPressed: () => Navigator.maybePop(context),
-                icon: AppIcon(
-                  AppGlyph.close,
-                  color: AppColors.inkMuted.resolve(context),
-                ),
               ),
-              Expanded(
-                child: Column(
-                  children: [
-                    caption(collection.title),
-                    label(
-                      isSequence
-                          ? '${math.min(session.completedEntries + 1, total)} / $total'
-                          : target == null
-                          ? 'Tanpa target'
-                          : 'Target $target',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 48),
+              const Spacer(),
+              if (isSequence)
+                _HeaderButton(
+                  glyph: AppGlyph.chevronRight,
+                  tooltip: 'Bacaan berikutnya',
+                  onPressed: session.canGoForward ? controller.next : null,
+                )
+              else
+                const SizedBox(width: _HeaderButton.size),
             ],
+          ),
+          const SizedBox(height: 4),
+          caption(collection.title),
+          label(
+            isSequence
+                ? '${session.entryIndex + 1} / $total'
+                : target == null
+                ? 'Tanpa target'
+                : 'Target $target',
           ),
           if (isSequence)
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
               child: _ProgressBar(value: session.completedEntries / total),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// A large, plainly drawn header button; dimmed when it can't act.
+class _HeaderButton extends StatelessWidget {
+  const _HeaderButton({
+    required this.glyph,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  static const size = 56.0;
+
+  final AppGlyph glyph;
+  final String tooltip;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final ink = AppColors.inkPrimary.resolve(context);
+    return SizedBox.square(
+      dimension: size,
+      child: IconButton(
+        tooltip: tooltip,
+        onPressed: onPressed,
+        icon: AppIcon(
+          glyph,
+          size: 26,
+          color: onPressed == null ? ink.withValues(alpha: 0.25) : ink,
+        ),
       ),
     );
   }
@@ -195,20 +240,6 @@ class _CountViewState extends State<_CountView> {
     final target = entry.target;
     final reachedOpenTarget = session.isComplete;
 
-    final arabic = TextStyler()
-        .style(AppText.ayah.mix())
-        .fontSize(30)
-        .color(AppColors.inkAyah())
-        .textAlign(TextAlign.center)
-        .textDirection(TextDirection.rtl);
-    final latin = TextStyler()
-        .style(AppText.body.mix())
-        .color(AppColors.inkSecondary())
-        .textAlign(TextAlign.center);
-    final meaning = TextStyler()
-        .style(AppText.translation.mix())
-        .color(AppColors.inkMuted())
-        .textAlign(TextAlign.center);
     final count = TextStyler()
         .style(AppText.counter.mix())
         .color(AppColors.inkPrimary());
@@ -222,7 +253,9 @@ class _CountViewState extends State<_CountView> {
         .color(AppColors.inkMuted())
         .textAlign(TextAlign.center);
 
-    return LayoutBuilder(
+    // The −1 button sits below the counting area, not inside it, so pressing
+    // it can never also count.
+    final countArea = LayoutBuilder(
       builder: (context, constraints) {
         final size = constraints.biggest;
         const dead = _CountView.edgeDeadZone;
@@ -252,24 +285,28 @@ class _CountViewState extends State<_CountView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    arabic(entry.text.arabic),
-                    const SizedBox(height: 8),
-                    latin(entry.text.latin),
-                    const SizedBox(height: 4),
-                    meaning(entry.text.translation),
+                    _Recitation(
+                      arabic: entry.text.arabic,
+                      latin: entry.text.latin,
+                      translation: entry.text.translation,
+                      settings: controller.services.settings,
+                      arabicSize: 30,
+                    ),
                     const SizedBox(height: 36),
-                    _CounterBead(
-                      phrase: entry.text.arabic,
-                      progress: target == null
-                          ? null
-                          : (session.count / target).clamp(0, 1),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          count('${session.count}'),
-                          const SizedBox(height: 6),
-                          goal(target == null ? '∞' : 'dari $target'),
-                        ],
+                    Flexible(
+                      child: _CounterBead(
+                        phrase: entry.text.arabic,
+                        progress: target == null
+                            ? null
+                            : (session.count / target).clamp(0, 1),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            count('${session.count}'),
+                            const SizedBox(height: 6),
+                            goal(target == null ? '∞' : 'dari $target'),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -285,6 +322,134 @@ class _CountViewState extends State<_CountView> {
           ),
         );
       },
+    );
+
+    return Column(
+      children: [
+        Expanded(child: countArea),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+          child: _PillButton(
+            label: '−1',
+            semanticsLabel: 'Kurangi satu hitungan',
+            onPressed: session.canDecrement ? controller.decrement : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A large, labelled pill for unsteady hands: −1, previous sentence.
+class _PillButton extends StatelessWidget {
+  const _PillButton({
+    required this.label,
+    required this.semanticsLabel,
+    required this.onPressed,
+  });
+
+  final String label;
+  final String semanticsLabel;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = onPressed != null;
+    final text = TextStyler()
+        .style(AppText.label.mix())
+        .fontSize(16)
+        .color(AppColors.inkPrimary());
+    final box = BoxStyler()
+        .borderRadius(.all(AppRadius.pill()))
+        .border(.all(.color(AppColors.border()).width(1)));
+
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: semanticsLabel,
+      excludeSemantics: true,
+      child: Opacity(
+        opacity: enabled ? 1 : 0.35,
+        child: box.pressable(
+          onPress: onPressed ?? () {},
+          enabled: enabled,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 96),
+            child: SizedBox(
+              height: 48,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Center(widthFactor: 1, child: text(label)),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Arabic first and largest; Latin smaller in the secondary ink; the
+/// meaning last, in serif and the faintest ink. Which lines show follows
+/// [DzikirSettings.layers]; the Arabic size follows its size setting.
+class _Recitation extends StatelessWidget {
+  const _Recitation({
+    required this.arabic,
+    required this.latin,
+    required this.translation,
+    required this.settings,
+    required this.arabicSize,
+    this.label,
+  });
+
+  final String arabic;
+  final String latin;
+  final String? translation;
+  final String? label;
+  final DzikirSettings settings;
+
+  /// Arabic font size at the medium setting.
+  final double arabicSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final layers = settings.layers;
+    final kicker = TextStyler()
+        .style(AppText.overline.mix())
+        .color(AppColors.accent())
+        .textAlign(TextAlign.center);
+    final arabicText = TextStyler()
+        .style(AppText.ayah.mix())
+        .fontSize(arabicSize * settings.arabicSize.scale)
+        .height(1.9)
+        .color(AppColors.inkAyah())
+        .textAlign(TextAlign.center)
+        .textDirection(TextDirection.rtl);
+    final latinText = TextStyler()
+        .style(AppText.body.mix())
+        .fontSize(16)
+        .height(1.5)
+        .color(AppColors.inkSecondary())
+        .textAlign(TextAlign.center);
+    final meaning = TextStyler()
+        .style(AppText.translation.mix())
+        .color(AppColors.inkMuted())
+        .textAlign(TextAlign.center);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (label case final label?) ...[
+          kicker(label.toUpperCase()),
+          const SizedBox(height: 12),
+        ],
+        arabicText(arabic),
+        if (layers.latin) ...[const SizedBox(height: 14), latinText(latin)],
+        if (layers.translation && translation != null) ...[
+          const SizedBox(height: 14),
+          meaning(translation!),
+        ],
+      ],
     );
   }
 }
@@ -309,8 +474,27 @@ class _CounterBead extends StatelessWidget {
   final double? progress;
   final Widget child;
 
+  static const _height = _ring + 40;
+
   @override
   Widget build(BuildContext context) {
+    // On short screens the whole bead scales down rather than overflowing.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final scale = math.min(1.0, constraints.maxHeight / _height);
+        return SizedBox(
+          height: _height * scale,
+          child: OverflowBox(
+            maxHeight: _height,
+            minHeight: _height,
+            child: Transform.scale(scale: scale, child: _bead(context)),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _bead(BuildContext context) {
     final backdrop = AppText.ayah
         .resolve(context)
         .copyWith(
@@ -320,7 +504,7 @@ class _CounterBead extends StatelessWidget {
         );
 
     return SizedBox(
-      height: _ring + 40,
+      height: _height,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -409,17 +593,194 @@ class _RingPainter extends CustomPainter {
       old.progress != progress || old.track != track || old.fill != fill;
 }
 
-/// Long text: scrolls freely; the glass button counts one recitation.
-class _ReadView extends StatefulWidget {
+/// Long text. With parts, one sentence at a time; otherwise a scroll.
+class _ReadView extends StatelessWidget {
   const _ReadView({super.key, required this.controller});
 
   final DzikirSessionController controller;
 
   @override
-  State<_ReadView> createState() => _ReadViewState();
+  Widget build(BuildContext context) =>
+      controller.session.currentEntry.text.segments.isEmpty
+      ? _ScrollReadView(controller: controller)
+      : _SentenceView(controller: controller);
 }
 
-class _ReadViewState extends State<_ReadView> {
+/// One sentence on screen, everything else out of sight, so the eye has a
+/// single place to rest. Tap anywhere for the next sentence; tapping the
+/// last counts one recitation and starts the text over if more are due.
+class _SentenceView extends StatefulWidget {
+  const _SentenceView({required this.controller});
+
+  final DzikirSessionController controller;
+
+  @override
+  State<_SentenceView> createState() => _SentenceViewState();
+}
+
+class _SentenceViewState extends State<_SentenceView> {
+  int _index = 0;
+
+  DzikirSessionController get controller => widget.controller;
+
+  void _next() {
+    final parts = controller.session.currentEntry.text.segments;
+    if (_index < parts.length - 1) {
+      setState(() => _index++);
+      controller.nudge();
+      return;
+    }
+    controller.increment();
+    setState(() => _index = 0);
+  }
+
+  void _previous() {
+    if (_index == 0) return;
+    setState(() => _index--);
+    controller.nudge();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final session = controller.session;
+    final entry = session.currentEntry;
+    final parts = entry.text.segments;
+    final part = parts[_index];
+    final target = entry.target ?? 1;
+    final isLast = _index == parts.length - 1;
+
+    final caption = TextStyler()
+        .style(AppText.caption.mix())
+        .color(AppColors.inkMuted())
+        .textAlign(TextAlign.center);
+
+    final stage = LayoutBuilder(
+      builder: (context, constraints) {
+        final size = constraints.biggest;
+        const dead = _CountView.edgeDeadZone;
+        return Semantics(
+          button: true,
+          label: isLast ? 'Selesai membaca' : 'Kalimat berikutnya',
+          onTap: _next,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (details) {
+              final p = details.localPosition;
+              if (p.dx >= dead && p.dx <= size.width - dead) _next();
+            },
+            child: Center(
+              child: SingleChildScrollView(
+                key: ValueKey(_index),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 16,
+                ),
+                child: _Recitation(
+                  arabic: part.arabic,
+                  latin: part.latin,
+                  translation: part.translation,
+                  label: part.label,
+                  settings: controller.services.settings,
+                  arabicSize: 32,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    return Column(
+      children: [
+        const SizedBox(height: 12),
+        caption(
+          target > 1
+              ? 'Dibaca $target× · bacaan ke-${session.count + 1}'
+              : 'Dibaca 1×',
+        ),
+        const SizedBox(height: 10),
+        _SentenceDots(count: parts.length, current: _index),
+        Expanded(child: stage),
+        caption(
+          isLast
+              ? (session.count + 1 < target
+                    ? 'Ketuk untuk selesai bacaan ke-${session.count + 1}'
+                    : 'Ketuk untuk selesai')
+              : 'Ketuk untuk kalimat berikutnya',
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _PillButton(
+                label: '‹ Kalimat',
+                semanticsLabel: 'Kalimat sebelumnya',
+                onPressed: _index > 0 ? _previous : null,
+              ),
+              const SizedBox(width: 12),
+              _PillButton(
+                label: '−1',
+                semanticsLabel: 'Kurangi satu hitungan',
+                onPressed: session.canDecrement
+                    ? () {
+                        controller.decrement();
+                        setState(() => _index = 0);
+                      }
+                    : null,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Where in the text you are: done sentences filled, the rest hollow.
+class _SentenceDots extends StatelessWidget {
+  const _SentenceDots({required this.count, required this.current});
+
+  final int count;
+  final int current;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = AppColors.accent.resolve(context);
+    final idle = AppColors.border.resolve(context);
+    return ExcludeSemantics(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (var i = 0; i < count; i++)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: i == current ? 18 : 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: i <= current ? accent : idle,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Long text without parts: scrolls freely; the glass button counts one
+/// recitation.
+class _ScrollReadView extends StatefulWidget {
+  const _ScrollReadView({required this.controller});
+
+  final DzikirSessionController controller;
+
+  @override
+  State<_ScrollReadView> createState() => _ScrollReadViewState();
+}
+
+class _ScrollReadViewState extends State<_ScrollReadView> {
   final _scroll = ScrollController();
 
   @override
@@ -453,17 +814,6 @@ class _ReadViewState extends State<_ReadView> {
         .style(AppText.caption.mix())
         .color(AppColors.inkMuted())
         .textAlign(TextAlign.center);
-    final arabic = TextStyler()
-        .style(AppText.ayah.mix())
-        .color(AppColors.inkAyah())
-        .textAlign(TextAlign.center)
-        .textDirection(TextDirection.rtl);
-    final latin = TextStyler()
-        .style(AppText.body.mix())
-        .color(AppColors.inkSecondary());
-    final meaning = TextStyler()
-        .style(AppText.translation.mix())
-        .color(AppColors.inkSecondary());
     final button = TextStyler()
         .style(AppText.label.mix())
         .fontSize(15)
@@ -484,12 +834,14 @@ class _ReadViewState extends State<_ReadView> {
                       : 'Dibaca 1×',
                 ),
                 const SizedBox(height: 12),
-                arabic(entry.text.arabic),
+                _Recitation(
+                  arabic: entry.text.arabic,
+                  latin: entry.text.latin,
+                  translation: entry.text.translation,
+                  settings: widget.controller.services.settings,
+                  arabicSize: 26,
+                ),
                 const SizedBox(height: 16),
-                latin(entry.text.latin),
-                const SizedBox(height: 12),
-                meaning(entry.text.translation),
-                const SizedBox(height: 12),
                 caption(entry.source),
               ],
             ),

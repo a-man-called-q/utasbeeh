@@ -27,7 +27,7 @@ class DzikirStatus {
       resume: services.store.progressFor(collection.id),
       now: now,
     );
-    if (session.entryIndex > 0 || session.count > 0) {
+    if (session.hasStarted) {
       return DzikirStatus._(
         DzikirStatusKind.inProgress,
         completed: session.completedEntries,

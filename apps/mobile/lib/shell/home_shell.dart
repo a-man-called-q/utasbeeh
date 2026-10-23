@@ -5,6 +5,7 @@ import '../features/dzikir/dzikir_list_screen.dart';
 import '../features/dzikir/dzikir_services.dart';
 import '../features/home/home_screen.dart';
 import '../features/quran/quran_preview_screen.dart';
+import '../features/settings/settings_screen.dart';
 
 typedef _Tab = ({String id, String label, AppGlyph icon});
 
@@ -12,9 +13,10 @@ const List<_Tab> _tabs = [
   (id: 'beranda', label: 'Beranda', icon: AppGlyph.home),
   (id: 'dzikir', label: 'Dzikir', icon: AppGlyph.tasbih),
   (id: 'quran', label: "Qur'an", icon: AppGlyph.book),
+  (id: 'pengaturan', label: 'Pengaturan', icon: AppGlyph.sliders),
 ];
 
-/// The three tabs under one floating glass tab bar. Tab content scrolls
+/// The four tabs under one floating glass tab bar. Tab content scrolls
 /// behind the bar so the glass has something to bend.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key, required this.services});
@@ -61,6 +63,7 @@ class _HomeShellState extends State<HomeShell> {
                   ),
                   DzikirListScreen(services: widget.services),
                   const QuranPreviewScreen(),
+                  SettingsScreen(settings: widget.services.settings),
                 ],
               ),
             ),

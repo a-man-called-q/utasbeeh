@@ -2,6 +2,8 @@ import 'package:dzikir_core/dzikir_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:tasbeeh/features/dzikir/dzikir_services.dart';
+
 import 'support/dzikir_fixture.dart';
 
 void main() {
@@ -54,6 +56,100 @@ void main() {
     ]);
     expect(find.text('Selesai (1/2)'), findsOneWidget);
     expect(h.store.progress['pagi']?.entryIndex, 1);
+  });
+
+  testWidgets('arrows step between entries and keep counts', (tester) async {
+    final h = DzikirHarness();
+    await openPagi(tester, h);
+
+    await tester.tap(find.byTooltip('Bacaan sebelumnya'));
+    await tester.pump();
+    expect(find.text('1 / 3'), findsOneWidget, reason: 'no entry before');
+    expect(h.feedback.steps, 0);
+
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    await tester.tap(find.byTooltip('Bacaan berikutnya'));
+    await tester.pump();
+    expect(find.text('2 / 3'), findsOneWidget);
+    expect(find.text('Selesai (1/2)'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Bacaan sebelumnya'));
+    await tester.pump();
+    expect(find.text('1 / 3'), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+    expect(h.feedback.steps, 2);
+    expect(h.store.progress['pagi']?.counts, [1, 0, 0]);
+  });
+
+  testWidgets('−1 takes back a count and never counts itself', (tester) async {
+    final h = DzikirHarness();
+    await openPagi(tester, h);
+
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    expect(find.text('1'), findsOneWidget);
+
+    await tester.tap(find.text('−1'));
+    await tester.pump();
+    expect(find.text('0'), findsOneWidget);
+    expect(h.feedback.events, [DzikirEvent.counted]);
+    expect(h.feedback.steps, 1);
+    expect(h.store.progress['pagi']?.count, 0);
+
+    await tester.tap(find.text('−1'));
+    await tester.pump();
+    expect(find.text('0'), findsOneWidget);
+    expect(h.feedback.steps, 1, reason: 'nothing left to take back');
+  });
+
+  testWidgets('counting stays silent with vibration off', (tester) async {
+    final h = DzikirHarness();
+    h.services.settings.vibrate = false;
+    await openPagi(tester, h);
+
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    expect(find.text('1'), findsOneWidget);
+    expect(h.feedback.events, isEmpty);
+  });
+
+  testWidgets('long texts go one sentence at a time', (tester) async {
+    final h = DzikirHarness();
+    await openDzikirTab(tester, h);
+    await tester.tap(find.text('Bacaan bertahap'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Part one,'), findsOneWidget);
+    expect(find.text('Arti satu,'), findsOneWidget);
+    expect(find.text('Dibaca 2× · bacaan ke-1'), findsOneWidget);
+
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    expect(find.text('part two'), findsOneWidget);
+    expect(find.text('Part one,'), findsNothing);
+    expect(h.feedback.events, isEmpty, reason: 'a sentence is not a count');
+
+    await tester.tap(find.text('‹ Kalimat'));
+    await tester.pump();
+    expect(find.text('Part one,'), findsOneWidget);
+
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    await tester.tapAt(center(tester));
+    await tester.pump();
+    expect(h.feedback.events, [DzikirEvent.counted]);
+    expect(find.text('Dibaca 2× · bacaan ke-2'), findsOneWidget);
+    expect(find.text('Part one,'), findsOneWidget, reason: 'starts over');
+  });
+
+  testWidgets('display setting hides Latin and meaning', (tester) async {
+    final h = DzikirHarness();
+    h.services.settings.layers = DzikirTextLayers.arabic;
+    await openPagi(tester, h);
+
+    expect(find.text('Subhanallah'), findsNothing);
+    expect(find.text('Mahasuci Allah'), findsNothing);
   });
 
   testWidgets('read entries count with the done button', (tester) async {

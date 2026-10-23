@@ -1,9 +1,13 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
-/// Theme, light/dark, glass and dzikir-session settings.
-class AppearanceScreen extends StatelessWidget {
-  const AppearanceScreen({super.key});
+import '../dzikir/dzikir_services.dart';
+
+/// The Pengaturan tab: theme, light/dark, dzikir session and glass.
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key, required this.settings});
+
+  final DzikirSettings settings;
 
   @override
   Widget build(BuildContext context) {
@@ -15,28 +19,18 @@ class AppearanceScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: ListenableBuilder(
-          listenable: controller,
+          listenable: Listenable.merge([controller, settings]),
           builder: (context, _) => ListView(
-            padding: const EdgeInsets.fromLTRB(24, 4, 24, 40),
+            padding: EdgeInsets.fromLTRB(
+              24,
+              28,
+              24,
+              MediaQuery.paddingOf(context).bottom + 24,
+            ),
             children: [
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: IconButton(
-                  tooltip: 'Kembali',
-                  style: IconButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    alignment: AlignmentDirectional.centerStart,
-                  ),
-                  onPressed: () => Navigator.maybePop(context),
-                  icon: AppIcon(
-                    AppGlyph.chevronLeft,
-                    color: AppColors.inkPrimary.resolve(context),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              title('Tampilan'),
+              title('Pengaturan'),
               _Section(
                 label: 'Tema',
                 children: [
@@ -85,6 +79,51 @@ class AppearanceScreen extends StatelessWidget {
                     label: 'Ikut mode',
                     selected: !controller.darkSessions,
                     onPress: () => controller.darkSessions = false,
+                  ),
+                ],
+              ),
+              _Section(
+                label: 'Tampilkan saat berdzikir',
+                children: [
+                  for (final (layers, label) in const [
+                    (DzikirTextLayers.arabic, 'Arab'),
+                    (DzikirTextLayers.arabicLatin, 'Arab + Latin'),
+                    (DzikirTextLayers.all, 'Lengkap dengan arti'),
+                  ])
+                    AppChip(
+                      label: label,
+                      selected: settings.layers == layers,
+                      onPress: () => settings.layers = layers,
+                    ),
+                ],
+              ),
+              _Section(
+                label: 'Ukuran teks Arab',
+                children: [
+                  for (final (size, label) in const [
+                    (DzikirArabicSize.small, 'Kecil'),
+                    (DzikirArabicSize.medium, 'Sedang'),
+                    (DzikirArabicSize.large, 'Besar'),
+                  ])
+                    AppChip(
+                      label: label,
+                      selected: settings.arabicSize == size,
+                      onPress: () => settings.arabicSize = size,
+                    ),
+                ],
+              ),
+              _Section(
+                label: 'Getar saat menghitung',
+                children: [
+                  AppChip(
+                    label: 'Nyala',
+                    selected: settings.vibrate,
+                    onPress: () => settings.vibrate = true,
+                  ),
+                  AppChip(
+                    label: 'Mati',
+                    selected: !settings.vibrate,
+                    onPress: () => settings.vibrate = false,
                   ),
                 ],
               ),

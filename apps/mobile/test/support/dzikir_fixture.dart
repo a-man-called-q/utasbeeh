@@ -20,6 +20,26 @@ final longText = DzikirText(
   translation: 'Bacaan panjang',
 );
 
+/// A text in two parts, read one sentence at a time.
+const partedText = DzikirText(
+  id: 'parted',
+  arabic: 'سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ',
+  latin: 'Part one, part two',
+  translation: 'Arti satu, arti dua',
+  segments: [
+    DzikirSegment(
+      arabic: 'سُبْحَانَ اللَّهِ',
+      latin: 'Part one,',
+      translation: 'Arti satu,',
+    ),
+    DzikirSegment(
+      arabic: 'وَالْحَمْدُ لِلَّهِ',
+      latin: 'part two',
+      translation: 'arti dua',
+    ),
+  ],
+);
+
 DzikirEntry entry(DzikirText text, int? target) =>
     DzikirEntry(text: text, target: target, source: 'HR. Test');
 
@@ -44,6 +64,19 @@ final fixtureLibrary = DzikirLibrary(
       window: const DzikirWindow(startMinute: 900, endMinute: 1140),
       entries: [entry(shortText, 1)],
     ),
+    const DzikirCollection(
+      id: 'bertahap',
+      title: 'Bacaan bertahap',
+      kind: DzikirCollectionKind.sequence,
+      entries: [
+        DzikirEntry(
+          text: partedText,
+          target: 2,
+          source: 'HR. Test',
+          modeOverride: DzikirMode.read,
+        ),
+      ],
+    ),
     DzikirCollection(
       id: 'tasbih_bebas',
       title: 'Tasbih bebas',
@@ -56,8 +89,13 @@ final fixtureLibrary = DzikirLibrary(
 class RecordingFeedback implements DzikirFeedback {
   final events = <DzikirEvent>[];
 
+  var steps = 0;
+
   @override
   void onEvent(DzikirEvent event) => events.add(event);
+
+  @override
+  void onStep() => steps++;
 }
 
 class DzikirHarness {

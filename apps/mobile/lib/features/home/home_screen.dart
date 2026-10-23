@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../dzikir/dzikir_list_screen.dart';
 import '../dzikir/dzikir_services.dart';
 import '../dzikir/dzikir_status.dart';
-import '../settings/appearance_screen.dart';
 
 /// "Today": the dzikir that fits the hour, the Qur'an, free tasbih.
 class HomeScreen extends StatefulWidget {
@@ -64,31 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
             MediaQuery.paddingOf(context).bottom + 24,
           ),
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      overline(_dateLabel(now).toUpperCase()),
-                      const SizedBox(height: 8),
-                      title("Assalāmu'alaikum"),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  tooltip: 'Tampilan',
-                  icon: AppIcon(
-                    AppGlyph.sliders,
-                    color: AppColors.inkPrimary.resolve(context),
-                  ),
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const AppearanceScreen()),
-                  ),
-                ),
-              ],
-            ),
+            overline(_dateLabel(now).toUpperCase()),
+            const SizedBox(height: 8),
+            title("Assalāmu'alaikum"),
             const SizedBox(height: 16),
             DzikirTodayStatus(services: services),
             const SizedBox(height: 56),
