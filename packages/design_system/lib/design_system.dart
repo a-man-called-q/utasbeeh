@@ -6,6 +6,8 @@ library;
 export 'package:mix/mix.dart';
 
 export 'src/components/app_chip.dart';
+export 'src/components/app_icon.dart';
+export 'src/components/app_list_row.dart';
 export 'src/glass/glass_mode.dart';
 export 'src/glass/glass_surface.dart';
 export 'src/theme/app_theme.dart';

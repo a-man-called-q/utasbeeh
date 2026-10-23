@@ -18,19 +18,24 @@ class AppearanceScreen extends StatelessWidget {
         child: ListenableBuilder(
           listenable: controller,
           builder: (context, _) => ListView(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+            padding: const EdgeInsets.fromLTRB(24, 4, 24, 40),
             children: [
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: IconButton(
                   tooltip: 'Kembali',
+                  style: IconButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    alignment: AlignmentDirectional.centerStart,
+                  ),
                   onPressed: () => Navigator.maybePop(context),
-                  icon: Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.inkMuted.resolve(context),
+                  icon: AppIcon(
+                    AppGlyph.chevronLeft,
+                    color: AppColors.inkPrimary.resolve(context),
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
               title('Tampilan'),
               _Section(
                 label: 'Tema',
@@ -41,7 +46,7 @@ class AppearanceScreen extends StatelessWidget {
                       selected: scope.theme.id == theme.id,
                       trailingIcon: controller.isUnlocked(theme)
                           ? null
-                          : Icons.lock_outline_rounded,
+                          : AppGlyph.lock,
                       onPress: () => controller.isUnlocked(theme)
                           ? controller.select(theme.id)
                           : controller.preview(theme.id),
@@ -114,17 +119,17 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final caption = TextStyler()
-        .style(AppText.caption.mix())
-        .color(AppColors.inkMuted());
+    final overline = TextStyler()
+        .style(AppText.overline.mix())
+        .color(AppColors.inkSecondary());
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          caption(label),
-          const SizedBox(height: 8),
-          Wrap(spacing: 6, runSpacing: 6, children: children),
+          overline(label.toUpperCase()),
+          const SizedBox(height: 12),
+          Wrap(spacing: 8, runSpacing: 8, children: children),
         ],
       ),
     );

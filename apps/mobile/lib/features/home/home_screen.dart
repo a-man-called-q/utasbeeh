@@ -46,8 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
       (c) => c.kind == DzikirCollectionKind.presets,
     );
 
-    final windowed = library.collections.where((c) => c.window != null);
-
     final title = TextStyler()
         .style(AppText.title.mix())
         .color(AppColors.inkPrimary());
@@ -81,8 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 IconButton(
                   tooltip: 'Tampilan',
-                  icon: Icon(
-                    Icons.tune_rounded,
+                  icon: AppIcon(
+                    AppGlyph.sliders,
                     color: AppColors.inkPrimary.resolve(context),
                   ),
                   onPressed: () => Navigator.of(context).push(
@@ -91,15 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            if (windowed.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              _TodayStatus(
-                entries: [
-                  for (final collection in windowed)
-                    (collection, DzikirStatus.of(collection, services)),
-                ],
-              ),
-            ],
+            const SizedBox(height: 16),
+            DzikirTodayStatus(services: services),
             const SizedBox(height: 56),
             _FeaturedDzikir(
               collection: featured,
@@ -110,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 56),
             overline('LAINNYA'),
             const SizedBox(height: 12),
-            _HomeRow(
+            AppListRow(
               title: 'Al-Fātiḥah',
               subtitle: 'Pratinjau pembaca · Hal. 1',
               first: true,
@@ -123,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPress: widget.onOpenQuran,
             ),
             for (final collection in presets)
-              _HomeRow(
+              AppListRow(
                 title: collection.title,
                 subtitle: DzikirStatus.of(
                   collection,
@@ -195,6 +186,9 @@ class _FeaturedDzikir extends StatelessWidget {
     final meta = TextStyler()
         .style(AppText.body.mix())
         .color(AppColors.inkSecondary());
+    final count = TextStyler()
+        .style(AppText.caption.mix())
+        .color(AppColors.inkSecondary());
     final action = TextStyler()
         .style(AppText.label.mix())
         .fontSize(15)
@@ -215,18 +209,27 @@ class _FeaturedDzikir extends StatelessWidget {
           const SizedBox(height: 10),
           title(collection.title),
           const SizedBox(height: 12),
-          meta(
-            status.kind == DzikirStatusKind.idle
-                ? '$total bacaan · ${collection.subtitle ?? ''}'
-                : status.describe(collection),
-          ),
+          if (collection.subtitle case final subtitle?) meta(subtitle),
           if (isSequence) ...[
             const SizedBox(height: 20),
-            _EntryTicks(
-              total: total,
-              done: status.kind == DzikirStatusKind.done
-                  ? total
-                  : status.completed,
+            Row(
+              children: [
+                Flexible(
+                  child: _EntryTicks(
+                    total: total,
+                    done: status.kind == DzikirStatusKind.done
+                        ? total
+                        : status.completed,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                count(switch (status.kind) {
+                  DzikirStatusKind.idle => '$total bacaan',
+                  DzikirStatusKind.inProgress =>
+                    '${status.completed} dari $total',
+                  DzikirStatusKind.done => 'Selesai hari ini',
+                }),
+              ],
             ),
           ],
           const SizedBox(height: 28),
@@ -245,8 +248,8 @@ class _FeaturedDzikir extends StatelessWidget {
                       DzikirStatusKind.idle => 'Mulai',
                     }),
                     const SizedBox(width: 10),
-                    Icon(
-                      Icons.arrow_forward_rounded,
+                    AppIcon(
+                      AppGlyph.arrowRight,
                       size: 18,
                       color: AppColors.surfacePage.resolve(context),
                     ),
@@ -289,133 +292,6 @@ class _EntryTicks extends StatelessWidget {
             ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-/// "● Pagi, selesai  ◐ Petang, sebagian" for the windowed collections.
-class _TodayStatus extends StatelessWidget {
-  const _TodayStatus({required this.entries});
-
-  final List<(DzikirCollection, DzikirStatus)> entries;
-
-  @override
-  Widget build(BuildContext context) {
-    final label = TextStyler()
-        .style(AppText.label.mix())
-        .fontWeight(FontWeight.w400)
-        .color(AppColors.inkSecondary());
-    final accent = AppColors.accent.resolve(context);
-    final idle = AppColors.inkMuted.resolve(context);
-
-    return Wrap(
-      spacing: 20,
-      runSpacing: 8,
-      children: [
-        for (final (collection, status) in entries)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: status.kind == DzikirStatusKind.idle ? idle : accent,
-                  ),
-                  gradient: switch (status.kind) {
-                    DzikirStatusKind.done => LinearGradient(
-                      colors: [accent, accent],
-                    ),
-                    DzikirStatusKind.inProgress => LinearGradient(
-                      colors: [accent, accent, accent.withValues(alpha: 0)],
-                      stops: const [0, 0.5, 0.5],
-                    ),
-                    DzikirStatusKind.idle => null,
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              label('${_name(collection)}, ${status.word}'),
-            ],
-          ),
-      ],
-    );
-  }
-
-  /// "Dzikir pagi" → "Pagi".
-  static String _name(DzikirCollection collection) {
-    final name = collection.title.replaceFirst('Dzikir ', '');
-    return name.isEmpty ? name : name[0].toUpperCase() + name.substring(1);
-  }
-}
-
-/// A plain list row: serif title, caption, trailing mark, chevron, hairlines.
-class _HomeRow extends StatelessWidget {
-  const _HomeRow({
-    required this.title,
-    required this.subtitle,
-    required this.trailing,
-    required this.onPress,
-    this.first = false,
-  });
-
-  final String title;
-  final String subtitle;
-  final Widget trailing;
-  final VoidCallback onPress;
-  final bool first;
-
-  @override
-  Widget build(BuildContext context) {
-    final heading = TextStyler()
-        .style(AppText.title.mix())
-        .fontSize(21)
-        .height(1.2)
-        .color(AppColors.inkPrimary());
-    final caption = TextStyler()
-        .style(AppText.label.mix())
-        .fontWeight(FontWeight.w400)
-        .color(AppColors.inkSecondary());
-    final hairline = BorderSide(color: AppColors.border.resolve(context));
-
-    return BoxStyler().pressable(
-      onPress: onPress,
-      semanticsLabel: title,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: first ? hairline : BorderSide.none,
-            bottom: hairline,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    heading(title),
-                    const SizedBox(height: 4),
-                    caption(subtitle),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 16),
-              trailing,
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: AppColors.inkMuted.resolve(context),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

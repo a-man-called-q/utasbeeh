@@ -110,8 +110,8 @@ class _SessionHeader extends StatelessWidget {
               IconButton(
                 tooltip: 'Tutup',
                 onPressed: () => Navigator.maybePop(context),
-                icon: Icon(
-                  Icons.close_rounded,
+                icon: AppIcon(
+                  AppGlyph.close,
                   color: AppColors.inkMuted.resolve(context),
                 ),
               ),

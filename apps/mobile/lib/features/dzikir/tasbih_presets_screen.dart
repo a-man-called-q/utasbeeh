@@ -53,33 +53,39 @@ class _TasbihPresetsScreenState extends State<TasbihPresetsScreen> {
     final title = TextStyler()
         .style(AppText.title.mix())
         .color(AppColors.inkPrimary());
-    final caption = TextStyler()
-        .style(AppText.caption.mix())
-        .color(AppColors.inkMuted());
+    final overline = TextStyler()
+        .style(AppText.overline.mix())
+        .color(AppColors.inkSecondary());
+    final entries = widget.collection.entries;
 
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 32),
+          padding: const EdgeInsets.fromLTRB(24, 4, 24, 40),
           children: [
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: IconButton(
                 tooltip: 'Kembali',
+                style: IconButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  alignment: AlignmentDirectional.centerStart,
+                ),
                 onPressed: () => Navigator.maybePop(context),
-                icon: Icon(
-                  Icons.chevron_left_rounded,
-                  color: AppColors.inkMuted.resolve(context),
+                icon: AppIcon(
+                  AppGlyph.chevronLeft,
+                  color: AppColors.inkPrimary.resolve(context),
                 ),
               ),
             ),
-            title(widget.collection.title),
-            const SizedBox(height: 16),
-            caption('Target'),
             const SizedBox(height: 8),
+            title(widget.collection.title),
+            const SizedBox(height: 28),
+            overline('TARGET'),
+            const SizedBox(height: 12),
             Wrap(
-              spacing: 6,
-              runSpacing: 6,
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 for (final goal in _goals)
                   AppChip(
@@ -89,15 +95,14 @@ class _TasbihPresetsScreenState extends State<TasbihPresetsScreen> {
                   ),
               ],
             ),
-            const SizedBox(height: 20),
-            for (final entry in widget.collection.entries) ...[
+            const SizedBox(height: 32),
+            for (final (i, entry) in entries.indexed)
               _PresetRow(
                 entry: entry,
                 target: _goal.targetFor(entry),
+                first: i == 0,
                 onPress: () => _start(entry),
               ),
-              const SizedBox(height: 8),
-            ],
           ],
         ),
       ),
@@ -109,20 +114,17 @@ class _PresetRow extends StatelessWidget {
   const _PresetRow({
     required this.entry,
     required this.target,
+    required this.first,
     required this.onPress,
   });
 
   final DzikirEntry entry;
   final int? target;
+  final bool first;
   final VoidCallback onPress;
 
   @override
   Widget build(BuildContext context) {
-    final box = BoxStyler()
-        .padding(.all(AppSpace.lg()))
-        .borderRadius(.all(AppRadius.md()))
-        .color(AppColors.surfaceRaised())
-        .border(.all(.color(AppColors.border()).width(1)));
     final arabic = TextStyler()
         .style(AppText.ayah.mix())
         .fontSize(22)
@@ -130,26 +132,44 @@ class _PresetRow extends StatelessWidget {
         .color(AppColors.inkAyah())
         .textDirection(TextDirection.rtl);
     final latin = TextStyler()
-        .style(AppText.caption.mix())
+        .style(AppText.label.mix())
+        .fontWeight(FontWeight.w400)
         .color(AppColors.inkSecondary());
     final goal = TextStyler()
         .style(AppText.label.mix())
         .color(AppColors.accent());
 
-    return box.pressable(
+    final hairline = BorderSide(color: AppColors.border.resolve(context));
+
+    return BoxStyler().pressable(
       onPress: onPress,
       semanticsLabel: entry.text.latin,
-      child: Row(
-        children: [
-          goal(target == null ? '∞' : '$target×'),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [arabic(entry.text.arabic), latin(entry.text.latin)],
-            ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: first ? hairline : BorderSide.none,
+            bottom: hairline,
           ),
-        ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Row(
+            children: [
+              goal(target == null ? '∞' : '$target×'),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    arabic(entry.text.arabic),
+                    const SizedBox(height: 4),
+                    latin(entry.text.latin),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

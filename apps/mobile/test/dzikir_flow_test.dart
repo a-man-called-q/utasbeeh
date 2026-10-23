@@ -24,8 +24,9 @@ void main() {
     final h = DzikirHarness();
     await openDzikirTab(tester, h);
 
-    expect(find.text('Hari ini: pagi belum · petang belum'), findsOneWidget);
-    expect(find.text('Sekarang · Pagi'), findsOneWidget);
+    expect(find.text('Pagi, belum'), findsOneWidget);
+    expect(find.text('Petang, belum'), findsOneWidget);
+    expect(find.text('SEKARANG'), findsOneWidget);
   });
 
   testWidgets('taps and swipes count; edges do not', (tester) async {
@@ -101,7 +102,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(h.awake, [true, false]);
     expect(find.text('Selesai hari ini'), findsOneWidget);
-    expect(find.text('Hari ini: pagi selesai · petang belum'), findsOneWidget);
+    expect(find.text('Pagi, selesai'), findsOneWidget);
+    expect(find.text('Petang, belum'), findsOneWidget);
   });
 
   testWidgets('reopening resumes stored progress', (tester) async {

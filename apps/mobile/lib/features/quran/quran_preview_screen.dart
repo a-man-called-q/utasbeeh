@@ -137,7 +137,7 @@ class _ReaderBar extends StatelessWidget {
               children: [label('Pratinjau pembaca'), caption('Hal. 1 · Juz 1')],
             ),
           ),
-          Icon(Icons.bookmark_outline_rounded, color: muted),
+          AppIcon(AppGlyph.bookmark, color: muted),
         ],
       ),
     );

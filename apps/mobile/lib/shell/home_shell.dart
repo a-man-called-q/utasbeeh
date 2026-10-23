@@ -6,12 +6,12 @@ import '../features/dzikir/dzikir_services.dart';
 import '../features/home/home_screen.dart';
 import '../features/quran/quran_preview_screen.dart';
 
-typedef _Tab = ({String id, String label, IconData icon});
+typedef _Tab = ({String id, String label, AppGlyph icon});
 
 const List<_Tab> _tabs = [
-  (id: 'beranda', label: 'Beranda', icon: Icons.home_rounded),
-  (id: 'dzikir', label: 'Dzikir', icon: Icons.adjust_rounded),
-  (id: 'quran', label: "Qur'an", icon: Icons.menu_book_rounded),
+  (id: 'beranda', label: 'Beranda', icon: AppGlyph.home),
+  (id: 'dzikir', label: 'Dzikir', icon: AppGlyph.tasbih),
+  (id: 'quran', label: "Qur'an", icon: AppGlyph.book),
 ];
 
 /// The three tabs under one floating glass tab bar. Tab content scrolls
@@ -125,8 +125,8 @@ class _TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = AppColors.accent.resolve(context);
-    final color = selected ? accent : AppColors.inkMuted.resolve(context);
+    final ink = AppColors.inkPrimary.resolve(context);
+    final color = selected ? ink : AppColors.inkSecondary.resolve(context);
     final label = AppText.caption
         .resolve(context)
         .copyWith(color: color, fontSize: 11, fontWeight: FontWeight.w500);
@@ -145,13 +145,13 @@ class _TabButton extends StatelessWidget {
           width: 76,
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? accent.withValues(alpha: 0.16) : null,
+            color: selected ? ink.withValues(alpha: 0.07) : null,
             borderRadius: BorderRadius.circular(26),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(tab.icon, size: 22, color: color),
+              AppIcon(tab.icon, size: 22, color: color),
               const SizedBox(height: 2),
               Text(tab.label, style: label),
             ],

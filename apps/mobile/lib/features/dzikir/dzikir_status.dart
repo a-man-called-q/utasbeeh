@@ -53,16 +53,13 @@ class DzikirStatus {
   double get fraction => total == 0 ? 0 : completed / total;
 
   /// One line under the collection title.
-  String describe(DzikirCollection collection, {bool now = false}) =>
-      switch (kind) {
-        DzikirStatusKind.inProgress => 'Lanjut · $completed dari $total',
-        DzikirStatusKind.done when collection.window == null =>
-          'Terakhir selesai ${_time(completedAt!)}',
-        DzikirStatusKind.done => 'Selesai hari ini',
-        DzikirStatusKind.idle when now =>
-          'Sekarang · ${collection.subtitle ?? ''}',
-        DzikirStatusKind.idle => collection.subtitle ?? '',
-      };
+  String describe(DzikirCollection collection) => switch (kind) {
+    DzikirStatusKind.inProgress => 'Lanjut · $completed dari $total',
+    DzikirStatusKind.done when collection.window == null =>
+      'Terakhir selesai ${_time(completedAt!)}',
+    DzikirStatusKind.done => 'Selesai hari ini',
+    DzikirStatusKind.idle => collection.subtitle ?? '',
+  };
 
   /// "selesai", "sebagian" or "belum", for the daily summary.
   String get word => switch (kind) {
@@ -73,15 +70,4 @@ class DzikirStatus {
 
   static String _time(DateTime t) =>
       '${t.hour.toString().padLeft(2, '0')}.${t.minute.toString().padLeft(2, '0')}';
-}
-
-/// "Hari ini: pagi selesai · petang belum", for windowed collections only.
-String dzikirTodaySummary(DzikirServices services) {
-  final parts = [
-    for (final collection in services.library.collections)
-      if (collection.window != null)
-        '${collection.title.replaceFirst('Dzikir ', '').toLowerCase()} '
-            '${DzikirStatus.of(collection, services).word}',
-  ];
-  return 'Hari ini: ${parts.join(' · ')}';
 }
