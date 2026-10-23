@@ -389,6 +389,12 @@ class _PillButton extends StatelessWidget {
   }
 }
 
+/// Uthmani text puts a space before each pause sign (ۖ ۗ ۚ …), so a sign at
+/// the end of a line or sentence lands on that space and floats loose. A
+/// mushaf prints it over the end of the word before it, so join it there.
+String attachWaqfMarks(String arabic) =>
+    arabic.replaceAllMapped(RegExp('\\s+([\u06D6-\u06DC])'), (m) => m[1]!);
+
 /// Arabic first and largest; Latin smaller in the secondary ink; the
 /// meaning last, in serif and the faintest ink. Which lines show follows
 /// [DzikirSettings.layers]; the Arabic size follows its size setting.
@@ -443,7 +449,7 @@ class _Recitation extends StatelessWidget {
           kicker(label.toUpperCase()),
           const SizedBox(height: 12),
         ],
-        arabicText(arabic),
+        arabicText(attachWaqfMarks(arabic)),
         if (layers.latin) ...[const SizedBox(height: 14), latinText(latin)],
         if (layers.translation && translation != null) ...[
           const SizedBox(height: 14),
@@ -830,22 +836,36 @@ class _ScrollReadViewState extends State<_ScrollReadView> {
           left: 16,
           right: 16,
           bottom: 16,
-          child: Semantics(
-            button: true,
-            child: GestureDetector(
-              onTap: _done,
-              child: GlassSurface(
-                radius: 28,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: button(
-                    isLast
-                        ? 'Selesai, lanjut'
-                        : 'Selesai (${session.count + 1}/$target)',
+          child: Row(
+            children: [
+              _PillButton(
+                label: '−1',
+                semanticsLabel: 'Kurangi satu hitungan',
+                onPressed: session.canDecrement
+                    ? widget.controller.decrement
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  child: GestureDetector(
+                    onTap: _done,
+                    child: GlassSurface(
+                      radius: 28,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: button(
+                          isLast
+                              ? 'Selesai, lanjut'
+                              : 'Selesai (${session.count + 1}/$target)',
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ],
