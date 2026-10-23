@@ -76,3 +76,25 @@ To regenerate the icons after changing the master (Python with Pillow):
 ```bash
 python3 apps/mobile/tool/generate_app_icons.py
 ```
+
+## Android release signing
+
+Release builds use the debug key until a release keystore is set up. To
+sign for the Play Store, create a keystore once and keep it and its
+passwords somewhere safe (losing it means you can no longer update the app):
+
+```bash
+keytool -genkey -v -keystore ~/tasbeeh-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+Then create `apps/mobile/android/key.properties` (git-ignored, never commit
+it):
+
+```properties
+storeFile=/Users/<you>/tasbeeh-upload.jks
+storePassword=<store password>
+keyAlias=upload
+keyPassword=<key password>
+```
+
+`flutter build appbundle --release` then signs with it.
