@@ -9,8 +9,8 @@ void main() {
     final h = DzikirHarness();
     await tester.pumpWidget(h.app());
 
-    expect(find.text('Jumat, 23 Oktober'), findsOneWidget);
-    expect(find.text('Sekarang'), findsOneWidget);
+    expect(find.text('JUMAT, 23 OKTOBER'), findsOneWidget);
+    expect(find.text('SEKARANG'), findsOneWidget);
     expect(find.text('Dzikir pagi'), findsOneWidget);
     expect(find.text('Mulai'), findsOneWidget);
 
@@ -23,7 +23,7 @@ void main() {
     final h = DzikirHarness(now: DateTime(2026, 10, 23, 13));
     await tester.pumpWidget(h.app());
 
-    expect(find.text('Setelah shalat'), findsOneWidget);
+    expect(find.text('SETELAH SHALAT'), findsOneWidget);
     // The fixture has no ba'da shalat, so the first sequence stands in.
     expect(find.text('Dzikir pagi'), findsOneWidget);
   });

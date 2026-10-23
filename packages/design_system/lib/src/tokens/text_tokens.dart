@@ -27,11 +27,15 @@ List<FontVariation> _serifAxes(double weight, double size) => [
 /// at the call site, so text styles stay identical across themes.
 abstract final class AppText {
   static const ayah = TextStyleToken('text.ayah');
+  static const display = TextStyleToken('text.display');
   static const translation = TextStyleToken('text.translation');
   static const title = TextStyleToken('text.title');
   static const body = TextStyleToken('text.body');
   static const label = TextStyleToken('text.label');
   static const caption = TextStyleToken('text.caption');
+
+  /// Small tracked label above a heading. Pass the text upper-cased.
+  static const overline = TextStyleToken('text.overline');
   static const counter = TextStyleToken('text.counter');
 
   static final Map<TextStyleToken, TextStyle> scale = {
@@ -48,13 +52,21 @@ abstract final class AppText {
       height: 1.6,
       fontVariations: _serifAxes(400, 15),
     ),
+    display: TextStyle(
+      fontFamily: AppFonts.serif,
+      package: AppFonts.package,
+      fontSize: 46,
+      height: 1.05,
+      letterSpacing: -0.9,
+      fontVariations: _serifAxes(400, 46),
+    ),
     title: TextStyle(
       fontFamily: AppFonts.serif,
       package: AppFonts.package,
-      fontSize: 26,
-      height: 1.25,
-      fontWeight: FontWeight.w500,
-      fontVariations: _serifAxes(500, 26),
+      fontSize: 30,
+      height: 1.15,
+      letterSpacing: -0.3,
+      fontVariations: _serifAxes(400, 30),
     ),
     body: const TextStyle(fontSize: 15, height: 1.5),
     label: const TextStyle(
@@ -63,11 +75,25 @@ abstract final class AppText {
       fontWeight: FontWeight.w500,
     ),
     caption: const TextStyle(fontSize: 12, height: 1.4),
-    counter: const TextStyle(
-      fontSize: 56,
+    overline: const TextStyle(
+      fontSize: 11,
+      height: 1.3,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.5,
+    ),
+    // Light serif numerals; tabular so the bead doesn't jitter as it counts.
+    counter: TextStyle(
+      fontFamily: AppFonts.serif,
+      package: AppFonts.package,
+      fontSize: 84,
       height: 1,
-      fontWeight: FontWeight.w500,
-      fontFeatures: [FontFeature.tabularFigures()],
+      letterSpacing: -2.5,
+      fontWeight: FontWeight.w300,
+      fontVariations: _serifAxes(300, 72),
+      fontFeatures: const [
+        FontFeature.tabularFigures(),
+        FontFeature.liningFigures(),
+      ],
     ),
   };
 }

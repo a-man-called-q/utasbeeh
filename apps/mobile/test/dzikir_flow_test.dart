@@ -74,7 +74,7 @@ void main() {
     await tester.tap(find.text('Selesai, lanjut'));
     await tester.pump();
     expect(find.text('3 / 3'), findsOneWidget);
-    expect(find.text('/ 1'), findsOneWidget);
+    expect(find.text('dari 1'), findsOneWidget);
   });
 
   testWidgets('finishing records completion and clears progress', (

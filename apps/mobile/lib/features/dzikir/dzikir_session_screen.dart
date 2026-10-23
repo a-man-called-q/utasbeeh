@@ -214,7 +214,9 @@ class _CountViewState extends State<_CountView> {
         .color(AppColors.inkPrimary());
     final goal = TextStyler()
         .style(AppText.label.mix())
-        .color(AppColors.accent());
+        .fontWeight(FontWeight.w400)
+        .letterSpacing(0.5)
+        .color(AppColors.inkSecondary());
     final hint = TextStyler()
         .style(AppText.caption.mix())
         .color(AppColors.inkMuted())
@@ -258,12 +260,15 @@ class _CountViewState extends State<_CountView> {
                     const SizedBox(height: 36),
                     _CounterBead(
                       phrase: entry.text.arabic,
+                      progress: target == null
+                          ? null
+                          : (session.count / target).clamp(0, 1),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           count('${session.count}'),
-                          const SizedBox(height: 4),
-                          goal(target == null ? '∞' : '/ $target'),
+                          const SizedBox(height: 6),
+                          goal(target == null ? '∞' : 'dari $target'),
                         ],
                       ),
                     ),
@@ -284,14 +289,24 @@ class _CountViewState extends State<_CountView> {
   }
 }
 
-/// The glass bead holding the count. Glass over a flat page reads as a plain
-/// disc, so the phrase is repeated faintly behind it for the glass to bend.
+/// The glass bead holding the count, inside a hairline ring that fills
+/// toward the target. Glass over a flat page reads as a plain disc, so the
+/// phrase is repeated faintly behind it for the glass to bend, fading out
+/// radially so it has no hard edges.
 class _CounterBead extends StatelessWidget {
-  const _CounterBead({required this.phrase, required this.child});
+  const _CounterBead({
+    required this.phrase,
+    required this.progress,
+    required this.child,
+  });
 
-  static const _diameter = 176.0;
+  static const _diameter = 200.0;
+  static const _ring = 240.0;
 
   final String phrase;
+
+  /// 0–1 toward the target; null when the entry has no target.
+  final double? progress;
   final Widget child;
 
   @override
@@ -301,28 +316,45 @@ class _CounterBead extends StatelessWidget {
         .copyWith(
           fontSize: 40,
           height: 1.5,
-          color: AppColors.inkAyah.resolve(context).withValues(alpha: 0.12),
+          color: AppColors.inkAyah.resolve(context).withValues(alpha: 0.10),
         );
 
     return SizedBox(
-      height: _diameter + 48,
+      height: _ring + 40,
       child: Stack(
         alignment: Alignment.center,
         children: [
           Positioned.fill(
-            child: ClipRect(
-              // Wider than the screen so lines run off both edges like a
-              // strip of beads, then clipped.
-              child: OverflowBox(
-                maxWidth: 640,
-                child: Text(
-                  List.filled(8, phrase).join('  '),
-                  style: backdrop,
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                  maxLines: 3,
-                  overflow: TextOverflow.clip,
+            child: ShaderMask(
+              blendMode: BlendMode.dstIn,
+              shaderCallback: (bounds) => const RadialGradient(
+                colors: [Color(0xFFFFFFFF), Color(0x00FFFFFF)],
+                stops: [0.5, 1],
+              ).createShader(bounds),
+              child: ClipRect(
+                // Wider than the screen so lines run off both edges like a
+                // strip of beads; the mask fades them out before the clip.
+                child: OverflowBox(
+                  maxWidth: 640,
+                  child: Text(
+                    List.filled(8, phrase).join('  '),
+                    style: backdrop,
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    maxLines: 4,
+                    overflow: TextOverflow.clip,
+                  ),
                 ),
+              ),
+            ),
+          ),
+          SizedBox.square(
+            dimension: _ring,
+            child: CustomPaint(
+              painter: _RingPainter(
+                progress: progress,
+                track: AppColors.border.resolve(context),
+                fill: AppColors.accent.resolve(context),
               ),
             ),
           ),
@@ -334,6 +366,47 @@ class _CounterBead extends StatelessWidget {
       ),
     );
   }
+}
+
+class _RingPainter extends CustomPainter {
+  const _RingPainter({
+    required this.progress,
+    required this.track,
+    required this.fill,
+  });
+
+  final double? progress;
+  final Color track;
+  final Color fill;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = (Offset.zero & size).deflate(1.5);
+    canvas.drawOval(
+      rect,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = track,
+    );
+    final sweep = (progress ?? 0) * 2 * math.pi;
+    if (sweep <= 0) return;
+    canvas.drawArc(
+      rect,
+      -math.pi / 2,
+      sweep,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round
+        ..color = fill,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter old) =>
+      old.progress != progress || old.track != track || old.fill != fill;
 }
 
 /// Long text: scrolls freely; the glass button counts one recitation.
