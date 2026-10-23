@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'app.dart';
 import 'features/dzikir/dzikir_progress_store.dart';
 import 'features/dzikir/dzikir_services.dart';
+import 'features/quran/quran_store.dart';
 import 'features/settings/settings_store.dart';
 
 Future<void> main() async {
@@ -24,6 +25,7 @@ Future<void> main() async {
         store: store,
         settings: settings.restoreDzikirSettings(),
       ),
+      quranStore: QuranStore(settingsBackend),
     ),
   );
 }

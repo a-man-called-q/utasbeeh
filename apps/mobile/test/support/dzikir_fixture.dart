@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:tasbeeh/app.dart';
 import 'package:tasbeeh/features/dzikir/dzikir_progress_store.dart';
 import 'package:tasbeeh/features/dzikir/dzikir_services.dart';
+import 'package:tasbeeh/features/quran/quran_store.dart';
+import 'package:tasbeeh/features/settings/settings_store.dart';
 
 const shortText = DzikirText(
   id: 'short',
@@ -105,6 +107,8 @@ class DzikirHarness {
   final store = InMemoryDzikirProgressStore();
   final feedback = RecordingFeedback();
   final awake = <bool>[];
+  final quranBackend = InMemorySettingsBackend();
+  late final quran = QuranStore(quranBackend);
 
   late final services = DzikirServices(
     library: fixtureLibrary,
@@ -119,5 +123,6 @@ class DzikirHarness {
         themeController ??
         ThemeController(mode: AppThemeMode.light, glassMode: GlassMode.solid),
     dzikirServices: services,
+    quranStore: quran,
   );
 }

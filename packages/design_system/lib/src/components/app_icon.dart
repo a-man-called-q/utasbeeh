@@ -7,6 +7,9 @@ enum AppGlyph {
   tasbih,
   book,
   bookmark,
+
+  /// [bookmark] filled in, for something saved.
+  bookmarkFilled,
   sliders,
   close,
   chevronLeft,
@@ -99,7 +102,7 @@ class _GlyphPainter extends CustomPainter {
           ..cubicTo(9, 18, 6, 18, 3, 19)
           ..close();
         line(const [Offset(12, 6.5), Offset(12, 20)]);
-      case AppGlyph.bookmark:
+      case AppGlyph.bookmark || AppGlyph.bookmarkFilled:
         line(const [
           Offset(7, 4),
           Offset(17, 4),
@@ -134,6 +137,9 @@ class _GlyphPainter extends CustomPainter {
           ..lineTo(16, 11);
     }
     canvas.drawPath(path, paint);
+    if (glyph == AppGlyph.bookmarkFilled) {
+      canvas.drawPath(path, paint..style = PaintingStyle.fill);
+    }
   }
 
   @override

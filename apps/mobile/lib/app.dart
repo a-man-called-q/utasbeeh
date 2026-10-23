@@ -2,6 +2,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
 import 'features/dzikir/dzikir_services.dart';
+import 'features/quran/quran_store.dart';
 import 'shell/home_shell.dart';
 
 class TasbeehApp extends StatelessWidget {
@@ -9,10 +10,12 @@ class TasbeehApp extends StatelessWidget {
     super.key,
     required this.themeController,
     required this.dzikirServices,
+    required this.quranStore,
   });
 
   final ThemeController themeController;
   final DzikirServices dzikirServices;
+  final QuranStore quranStore;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,7 @@ class TasbeehApp extends StatelessWidget {
             title: 'Tasbeeh',
             debugShowCheckedModeBanner: false,
             theme: _materialTheme(palette),
-            home: HomeShell(services: dzikirServices),
+            home: HomeShell(services: dzikirServices, quran: quranStore),
           );
         },
       ),
