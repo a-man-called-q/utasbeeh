@@ -29,3 +29,5 @@ flutter:
     - family: Newsreader
       fonts:
         - asset: fonts/Newsreader-Variable.ttf
+        - asset: fonts/Newsreader-Italic-Variable.ttf
+          style: italic

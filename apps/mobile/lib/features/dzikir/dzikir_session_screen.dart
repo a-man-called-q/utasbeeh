@@ -395,8 +395,8 @@ class _PillButton extends StatelessWidget {
 String attachWaqfMarks(String arabic) =>
     arabic.replaceAllMapped(RegExp('\\s+([\u06D6-\u06DC])'), (m) => m[1]!);
 
-/// Arabic first and largest; Latin smaller in the secondary ink; the
-/// meaning last, in serif and the faintest ink. Which lines show follows
+/// Arabic first and largest; Latin smaller, in italic serif and the
+/// secondary ink; the meaning last, in plain sans and the faintest ink. Which lines show follows
 /// [DzikirSettings.layers]; the Arabic size follows its size setting.
 class _Recitation extends StatelessWidget {
   const _Recitation({
@@ -432,13 +432,16 @@ class _Recitation extends StatelessWidget {
         .textAlign(TextAlign.center)
         .textDirection(TextDirection.rtl);
     final latinText = TextStyler()
-        .style(AppText.body.mix())
-        .fontSize(16)
-        .height(1.5)
+        .style(AppText.translation.mix())
+        .fontSize(18)
+        .height(1.45)
+        .fontStyle(FontStyle.italic)
         .color(AppColors.inkSecondary())
         .textAlign(TextAlign.center);
     final meaning = TextStyler()
-        .style(AppText.translation.mix())
+        .style(AppText.body.mix())
+        .fontSize(14)
+        .height(1.55)
         .color(AppColors.inkMuted())
         .textAlign(TextAlign.center);
 
