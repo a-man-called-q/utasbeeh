@@ -2,6 +2,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_core/quran_core.dart';
 
+import '../settings/settings_store.dart';
 import 'bookmark_store.dart';
 
 /// One surah, ayah by ayah, each with a bookmark. Opens at [startAyah] when
@@ -11,12 +12,16 @@ class ReaderScreen extends StatelessWidget {
     super.key,
     required this.library,
     required this.store,
+    required this.settings,
     required this.surah,
     this.startAyah,
   });
 
   final QuranLibrary library;
   final BookmarkStore store;
+
+  /// The Arabic size.
+  final LiteSettings settings;
   final Surah surah;
   final int? startAyah;
 
@@ -32,6 +37,7 @@ class ReaderScreen extends StatelessWidget {
     final basmalah = library.surah(1)?.ayat.first.arabic;
     // Item 0 is the surah opening, item n is ayah n.
     final count = surah.ayat.length + 1;
+    final scale = settings.arabicSize.scale;
     final start = (startAyah ?? 0).clamp(0, surah.ayat.length);
 
     Widget item(int index) {
@@ -39,6 +45,7 @@ class ReaderScreen extends StatelessWidget {
         return _SurahOpening(
           surah: surah,
           basmalah: surah.headedByBasmalah ? basmalah : null,
+          arabicScale: scale,
         );
       }
       final ayah = surah.ayat[index - 1];
@@ -49,6 +56,7 @@ class ReaderScreen extends StatelessWidget {
             ? withoutBasmalah(ayah.arabic, basmalah ?? '')
             : ayah.arabic,
         translation: ayah.translation,
+        arabicScale: scale,
         opened: ayah.number == startAyah,
         bookmarked: store.isBookmarked(ref),
         onBookmark: () => store.toggle(ref),
@@ -57,7 +65,7 @@ class ReaderScreen extends StatelessWidget {
 
     return Scaffold(
       body: ListenableBuilder(
-        listenable: store,
+        listenable: Listenable.merge([store, settings]),
         builder: (context, _) => Stack(
           children: [
             // The start item is the scroll view's center, so it opens exactly
@@ -115,10 +123,15 @@ class ReaderScreen extends StatelessWidget {
 }
 
 class _SurahOpening extends StatelessWidget {
-  const _SurahOpening({required this.surah, required this.basmalah});
+  const _SurahOpening({
+    required this.surah,
+    required this.basmalah,
+    required this.arabicScale,
+  });
 
   final Surah surah;
   final String? basmalah;
+  final double arabicScale;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +146,7 @@ class _SurahOpening extends StatelessWidget {
         .color(AppColors.inkSecondary());
     final arabic = TextStyler()
         .style(AppText.ayah.mix())
-        .fontSize(24)
+        .fontSize(24 * arabicScale)
         .height(1.8)
         .color(AppColors.inkAyah())
         .textAlign(TextAlign.center)
@@ -165,6 +178,7 @@ class _AyahBlock extends StatelessWidget {
     required this.ref,
     required this.arabic,
     required this.translation,
+    required this.arabicScale,
     required this.opened,
     required this.bookmarked,
     required this.onBookmark,
@@ -173,6 +187,7 @@ class _AyahBlock extends StatelessWidget {
   final AyahRef ref;
   final String arabic;
   final String translation;
+  final double arabicScale;
 
   /// The ayah the reader was opened at.
   final bool opened;
@@ -216,9 +231,10 @@ class _AyahBlock extends StatelessWidget {
                   ),
                 ],
               ),
-              style: AppText.ayah
-                  .resolve(context)
-                  .copyWith(color: AppColors.inkAyah.resolve(context)),
+              style: _scaled(
+                AppText.ayah.resolve(context),
+                arabicScale,
+              ).copyWith(color: AppColors.inkAyah.resolve(context)),
               textAlign: TextAlign.start,
               textDirection: TextDirection.rtl,
             ),
@@ -297,3 +313,6 @@ class _ReaderBar extends StatelessWidget {
     );
   }
 }
+
+TextStyle _scaled(TextStyle style, double scale) =>
+    style.copyWith(fontSize: (style.fontSize ?? 14) * scale);

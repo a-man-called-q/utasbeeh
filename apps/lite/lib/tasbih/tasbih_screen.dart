@@ -1,16 +1,25 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 
+import '../settings/settings_store.dart';
 import 'tasbih_feedback.dart';
 import 'tasbih_store.dart';
 
 /// Just the count: tap or swipe anywhere above the buttons to count, −1 to
 /// take one back, "Ulang" to start from zero.
 class TasbihScreen extends StatefulWidget {
-  const TasbihScreen({super.key, required this.store, required this.feedback});
+  const TasbihScreen({
+    super.key,
+    required this.store,
+    required this.feedback,
+    required this.settings,
+  });
 
   final TasbihStore store;
   final TasbihFeedback feedback;
+
+  /// Whether counting vibrates.
+  final LiteSettings settings;
 
   /// Touches this close to the left, right or bottom edge of the counting
   /// area don't count: the system back and home gestures live there.
@@ -27,12 +36,12 @@ class _TasbihScreenState extends State<TasbihScreen> {
 
   void _count() {
     store.increment();
-    widget.feedback.onCount(store.count);
+    if (widget.settings.vibrate) widget.feedback.onCount(store.count);
   }
 
   void _decrement() {
     store.decrement();
-    widget.feedback.onStep();
+    if (widget.settings.vibrate) widget.feedback.onStep();
   }
 
   Future<void> _reset() async {
@@ -55,7 +64,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
     );
     if (confirmed ?? false) {
       store.reset();
-      widget.feedback.onStep();
+      if (widget.settings.vibrate) widget.feedback.onStep();
     }
   }
 

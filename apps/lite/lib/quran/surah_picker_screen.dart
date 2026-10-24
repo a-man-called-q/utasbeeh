@@ -2,6 +2,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_core/quran_core.dart';
 
+import '../settings/settings_store.dart';
 import 'bookmark_store.dart';
 import 'reader_screen.dart';
 
@@ -12,10 +13,12 @@ class SurahPickerScreen extends StatefulWidget {
     super.key,
     required this.library,
     required this.store,
+    required this.settings,
   });
 
   final QuranLibrary library;
   final BookmarkStore store;
+  final LiteSettings settings;
 
   @override
   State<SurahPickerScreen> createState() => _SurahPickerScreenState();
@@ -36,6 +39,7 @@ class _SurahPickerScreenState extends State<SurahPickerScreen> {
         builder: (_) => ReaderScreen(
           library: widget.library,
           store: widget.store,
+          settings: widget.settings,
           surah: surah,
           startAyah: ayah,
         ),

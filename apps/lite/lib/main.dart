@@ -5,6 +5,7 @@ import 'package:quran_core/quran_core.dart';
 
 import 'app.dart';
 import 'quran/bookmark_store.dart';
+import 'settings/settings_store.dart';
 import 'storage.dart';
 import 'tasbih/tasbih_store.dart';
 
@@ -15,8 +16,11 @@ Future<void> main() async {
     SharedPrefsStorage.open(),
     GlassSurface.precache(),
   ).wait;
+  final settings = SettingsStore(storage);
   runApp(
     LiteApp(
+      themeController: settings.restoreTheme(),
+      settings: settings.restoreSettings(),
       tasbih: TasbihStore(storage),
       quranLibrary: quran,
       bookmarks: BookmarkStore(storage),

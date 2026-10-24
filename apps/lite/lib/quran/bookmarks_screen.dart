@@ -2,6 +2,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_core/quran_core.dart';
 
+import '../settings/settings_store.dart';
 import 'bookmark_store.dart';
 import 'reader_screen.dart';
 import 'surah_picker_screen.dart';
@@ -14,15 +15,21 @@ class BookmarksScreen extends StatelessWidget {
     super.key,
     required this.library,
     required this.store,
+    required this.settings,
   });
 
   final QuranLibrary library;
   final BookmarkStore store;
+  final LiteSettings settings;
 
   void _openPicker(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => SurahPickerScreen(library: library, store: store),
+        builder: (_) => SurahPickerScreen(
+          library: library,
+          store: store,
+          settings: settings,
+        ),
       ),
     );
   }
@@ -33,6 +40,7 @@ class BookmarksScreen extends StatelessWidget {
         builder: (_) => ReaderScreen(
           library: library,
           store: store,
+          settings: settings,
           surah: surah,
           startAyah: ayah,
         ),

@@ -3,22 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:quran_core/quran_core.dart';
 
 import 'quran/bookmark_store.dart';
+import 'settings/settings_store.dart';
 import 'shell.dart';
 import 'tasbih/tasbih_feedback.dart';
 import 'tasbih/tasbih_store.dart';
 
-/// Tasbeeh Lite: the default theme following the system's light or dark,
-/// with no settings to choose.
+/// Tasbeeh Lite: a counter and Qur'an bookmarks, with a few settings.
 class LiteApp extends StatelessWidget {
-  LiteApp({
+  const LiteApp({
     super.key,
+    required this.themeController,
+    required this.settings,
     required this.tasbih,
     required this.quranLibrary,
     required this.bookmarks,
     this.feedback = const HapticTasbihFeedback(),
-    ThemeController? themeController,
-  }) : themeController = themeController ?? ThemeController();
+  });
 
+  final LiteSettings settings;
   final TasbihStore tasbih;
   final TasbihFeedback feedback;
   final QuranLibrary quranLibrary;
@@ -37,6 +39,7 @@ class LiteApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: _materialTheme(palette),
             home: LiteShell(
+              settings: settings,
               tasbih: tasbih,
               feedback: feedback,
               quranLibrary: quranLibrary,

@@ -4,6 +4,8 @@ import 'package:quran_core/quran_core.dart';
 
 import 'quran/bookmark_store.dart';
 import 'quran/bookmarks_screen.dart';
+import 'settings/settings_screen.dart';
+import 'settings/settings_store.dart';
 import 'tasbih/tasbih_feedback.dart';
 import 'tasbih/tasbih_screen.dart';
 import 'tasbih/tasbih_store.dart';
@@ -13,18 +15,21 @@ typedef _Tab = ({String id, String label, AppGlyph icon});
 const List<_Tab> _tabs = [
   (id: 'tasbih', label: 'Tasbih', icon: AppGlyph.tasbih),
   (id: 'quran', label: "Qur'an", icon: AppGlyph.bookmark),
+  (id: 'pengaturan', label: 'Pengaturan', icon: AppGlyph.sliders),
 ];
 
-/// Two tabs under one floating glass tab bar.
+/// Three tabs under one floating glass tab bar.
 class LiteShell extends StatefulWidget {
   const LiteShell({
     super.key,
+    required this.settings,
     required this.tasbih,
     required this.feedback,
     required this.quranLibrary,
     required this.bookmarks,
   });
 
+  final LiteSettings settings;
   final TasbihStore tasbih;
   final TasbihFeedback feedback;
   final QuranLibrary quranLibrary;
@@ -60,11 +65,17 @@ class _LiteShellState extends State<LiteShell> {
               child: IndexedStack(
                 index: _index,
                 children: [
-                  TasbihScreen(store: widget.tasbih, feedback: widget.feedback),
+                  TasbihScreen(
+                    store: widget.tasbih,
+                    feedback: widget.feedback,
+                    settings: widget.settings,
+                  ),
                   BookmarksScreen(
                     library: widget.quranLibrary,
                     store: widget.bookmarks,
+                    settings: widget.settings,
                   ),
+                  SettingsScreen(settings: widget.settings),
                 ],
               ),
             ),
