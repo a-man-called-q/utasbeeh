@@ -2,8 +2,8 @@ import 'dart:math' as math;
 
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:quran_core/quran_core.dart';
 
-import 'quran_library.dart';
 import 'quran_store.dart';
 
 /// One surah, ayah by ayah: Arabic with its marker, the translation, and a
@@ -300,19 +300,6 @@ class _AyahBlock extends StatelessWidget {
       ),
     );
   }
-}
-
-const _arabicDigits = '٠١٢٣٤٥٦٧٨٩';
-
-/// End-of-ayah marker in ornate parentheses with Arabic-Indic digits,
-/// e.g. ﴿١٢﴾. Written in logical (RTL) order.
-String ayahMarker(int number) {
-  final digits = number
-      .toString()
-      .split('')
-      .map((d) => _arabicDigits[int.parse(d)])
-      .join();
-  return '﴿$digits﴾';
 }
 
 class _ReaderBar extends StatelessWidget {

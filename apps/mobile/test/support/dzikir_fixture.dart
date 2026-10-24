@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:tasbeeh/app.dart';
 import 'package:tasbeeh/features/dzikir/dzikir_progress_store.dart';
 import 'package:tasbeeh/features/dzikir/dzikir_services.dart';
-import 'package:tasbeeh/features/quran/quran_library.dart';
 import 'package:tasbeeh/features/quran/quran_store.dart';
 import 'package:tasbeeh/features/settings/settings_store.dart';
+import 'package:quran_core/quran_core.dart';
 
 const shortText = DzikirText(
   id: 'short',

@@ -1,21 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:quran_core/quran_core.dart';
 
 import '../settings/settings_store.dart';
-
-/// An ayah's address, e.g. 2:255.
-typedef AyahRef = ({int surah, int ayah});
-
-String _key(AyahRef ref) => '${ref.surah}:${ref.ayah}';
-
-AyahRef? _parse(String raw) {
-  final parts = raw.split(':');
-  if (parts.length != 2) return null;
-  final surah = int.tryParse(parts[0]);
-  final ayah = int.tryParse(parts[1]);
-  return surah == null || ayah == null ? null : (surah: surah, ayah: ayah);
-}
 
 /// Bookmarked ayat and where reading stopped, kept across restarts.
 ///
@@ -25,9 +13,9 @@ class QuranStore extends ChangeNotifier {
   QuranStore(this._backend)
     : _bookmarks = {
         for (final raw in (_backend.read(_bookmarksKey) ?? '').split(','))
-          ?_parse(raw),
+          ?parseAyahRef(raw),
       },
-      _lastRead = _parse(_backend.read(_lastReadKey) ?? '');
+      _lastRead = parseAyahRef(_backend.read(_lastReadKey) ?? '');
 
   static const _bookmarksKey = 'quran.bookmarks';
   static const _lastReadKey = 'quran.lastRead';
@@ -42,14 +30,16 @@ class QuranStore extends ChangeNotifier {
 
   void toggleBookmark(AyahRef ref) {
     if (!_bookmarks.remove(ref)) _bookmarks.add(ref);
-    unawaited(_backend.write(_bookmarksKey, _bookmarks.map(_key).join(',')));
+    unawaited(
+      _backend.write(_bookmarksKey, _bookmarks.map(formatAyahRef).join(',')),
+    );
     notifyListeners();
   }
 
   set lastRead(AyahRef? ref) {
     if (ref == null || ref == _lastRead) return;
     _lastRead = ref;
-    unawaited(_backend.write(_lastReadKey, _key(ref)));
+    unawaited(_backend.write(_lastReadKey, formatAyahRef(ref)));
     notifyListeners();
   }
 }

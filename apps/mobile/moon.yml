@@ -6,7 +6,7 @@ project:
   title: "mobile"
   description: "Tasbeeh app for iOS and Android."
 
-dependsOn: ["design_system"]
+dependsOn: ["design_system", "quran_core"]
 
 fileGroups:
   sources:

@@ -1,5 +1,3 @@
-import 'package:flutter/services.dart';
-
 import 'surah_names.dart';
 
 final class Ayah {
@@ -41,7 +39,7 @@ final class Surah {
 }
 
 /// The whole Qur'an: Tanzil's Uthmani text with an interim English
-/// translation, bundled verbatim under `assets/quran/` (see SOURCES.md
+/// translation, bundled verbatim under `lib/content/` (see SOURCES.md
 /// there) and parsed at startup.
 final class QuranLibrary {
   QuranLibrary(this.surahs);
@@ -76,13 +74,18 @@ final class QuranLibrary {
     ]);
   }
 
-  static const arabicAsset = 'assets/quran/quran-uthmani.txt';
-  static const translationAsset = 'assets/quran/en.pickthall.txt';
+  /// Asset keys for an app that lists them under `flutter: assets:`.
+  static const arabicAsset = 'packages/quran_core/content/quran-uthmani.txt';
+  static const translationAsset =
+      'packages/quran_core/content/en.pickthall.txt';
 
-  static Future<QuranLibrary> load(AssetBundle bundle) async {
+  /// Loads both files through [loadString], e.g. `rootBundle.loadString`.
+  static Future<QuranLibrary> load(
+    Future<String> Function(String asset) loadString,
+  ) async {
     final (arabic, translation) = await (
-      bundle.loadString(arabicAsset),
-      bundle.loadString(translationAsset),
+      loadString(arabicAsset),
+      loadString(translationAsset),
     ).wait;
     return QuranLibrary.parse(arabic: arabic, translation: translation);
   }

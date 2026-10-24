@@ -1,7 +1,7 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:quran_core/quran_core.dart';
 
-import 'quran_library.dart';
 import 'quran_reader_screen.dart';
 import 'quran_store.dart';
 

@@ -1,10 +1,10 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:quran_core/quran_core.dart';
 
 import '../features/dzikir/dzikir_list_screen.dart';
 import '../features/dzikir/dzikir_services.dart';
 import '../features/home/home_screen.dart';
-import '../features/quran/quran_library.dart';
 import '../features/quran/quran_screen.dart';
 import '../features/quran/quran_store.dart';
 import '../features/settings/settings_screen.dart';

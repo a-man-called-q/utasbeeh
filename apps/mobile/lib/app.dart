@@ -1,8 +1,8 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:quran_core/quran_core.dart';
 
 import 'features/dzikir/dzikir_services.dart';
-import 'features/quran/quran_library.dart';
 import 'features/quran/quran_store.dart';
 import 'shell/home_shell.dart';
 

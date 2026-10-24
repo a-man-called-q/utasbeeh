@@ -1,13 +1,16 @@
 # u-tasbeeh
 
-Dzikr counter and Qur'an reader for iOS and Android. A Flutter monorepo run by
+Dzikr counter and Qur'an reader for iOS and Android, plus Tasbeeh Lite (a
+plain counter and Qur'an bookmarks). A Flutter monorepo run by
 [moon](https://moonrepo.dev), with tools pinned by [proto](https://moonrepo.dev/proto)
 and packages linked by a Dart pub workspace.
 
 ```
 apps/mobile            Flutter app (iOS + Android)
+apps/lite              Tasbeeh Lite: tasbih counter and Qur'an bookmarks
 packages/design_system Mix tokens, themes, fonts, GlassSurface
 packages/dzikir_core   Dzikir content, counter rules, progress (pure Dart)
+packages/quran_core    Bundled mushaf, surah index, ayah addresses (pure Dart)
 ```
 
 ## Setup
@@ -27,6 +30,7 @@ moon run :analyze :format :test   # everything, cached
 moon run mobile:run               # flutter run (add -- -d <device>)
 moon run mobile:build-ios         # unsigned iOS build
 moon run mobile:build-android     # debug APK
+moon run lite:run                 # the same tasks exist for apps/lite
 ```
 
 moon reads git, so the repository needs at least one commit before tasks run.
@@ -88,7 +92,7 @@ keytool -genkey -v -keystore ~/tasbeeh-upload.jks -keyalg RSA -keysize 2048 -val
 ```
 
 Then create `apps/mobile/android/key.properties` (git-ignored, never commit
-it):
+it; Tasbeeh Lite reads `apps/lite/android/key.properties` the same way):
 
 ```properties
 storeFile=/Users/<you>/tasbeeh-upload.jks

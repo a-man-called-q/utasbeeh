@@ -17,6 +17,8 @@ dependencies:
   wakelock_plus: ^1.8.2
   dzikir_core:
     path: ../../packages/dzikir_core
+  quran_core:
+    path: ../../packages/quran_core
   vibration: ^3.2.1
 
 dev_dependencies:
@@ -28,6 +30,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/branding/tasbeeh-icon.png
-    - assets/quran/quran-uthmani.txt
-    - assets/quran/en.pickthall.txt
+    - packages/quran_core/content/quran-uthmani.txt
+    - packages/quran_core/content/en.pickthall.txt
     - packages/dzikir_core/content/dzikir.json

@@ -1,0 +1,60 @@
+language: "dart"
+layer: "application"
+tags: ["flutter"]
+
+project:
+  title: "lite"
+  description: "Tasbeeh Lite: tasbih counter and Qur'an bookmarks."
+
+dependsOn: ["design_system", "quran_core"]
+
+fileGroups:
+  sources:
+    - "lib/**/*"
+    - "pubspec.yaml"
+    - "analysis_options.yaml"
+  tests:
+    - "test/**/*"
+  native:
+    - "ios/**/*"
+    - "android/**/*"
+
+tasks:
+  analyze:
+    command: "flutter analyze"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(tests)"]
+
+  format:
+    command: "dart format --output=none --set-exit-if-changed lib test"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(tests)"]
+
+  test:
+    command: "flutter test"
+    toolchains: "system"
+    deps: ["design_system:test"]
+    inputs: ["@group(sources)", "@group(tests)"]
+
+  # Pick the device with `moon run lite:run -- -d <id>`.
+  run:
+    command: "flutter run"
+    toolchains: "system"
+    options:
+      cache: false
+      interactive: true
+      runInCI: false
+
+  build-ios:
+    command: "flutter build ios --no-codesign"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(native)"]
+    options:
+      runInCI: false
+
+  build-android:
+    command: "flutter build apk --debug"
+    toolchains: "system"
+    inputs: ["@group(sources)", "@group(native)"]
+    options:
+      runInCI: false

@@ -1,11 +1,11 @@
 import 'package:design_system/design_system.dart';
 import 'package:dzikir_core/dzikir_core.dart';
 import 'package:flutter/material.dart';
+import 'package:quran_core/quran_core.dart';
 
 import '../dzikir/dzikir_list_screen.dart';
 import '../dzikir/dzikir_services.dart';
 import '../dzikir/dzikir_status.dart';
-import '../quran/quran_library.dart';
 import '../quran/quran_store.dart';
 
 /// "Today": the dzikir that fits the hour, the Qur'an, free tasbih.

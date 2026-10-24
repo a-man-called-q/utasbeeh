@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tasbeeh/features/quran/quran_library.dart';
 import 'package:tasbeeh/features/quran/quran_store.dart';
 import 'package:tasbeeh/features/settings/settings_store.dart';
 
@@ -34,34 +31,6 @@ void main() {
       expect(store.isBookmarked((surah: 1, ayah: 2)), isTrue);
       expect(store.isBookmarked((surah: 4, ayah: 4)), isTrue);
       expect(store.lastRead, isNull);
-    });
-  });
-
-  group('bundled mushaf', () {
-    final library = QuranLibrary.parse(
-      arabic: File(QuranLibrary.arabicAsset).readAsStringSync(),
-      translation: File(QuranLibrary.translationAsset).readAsStringSync(),
-    );
-
-    test('holds every ayah of every surah', () {
-      expect(library.surahs, hasLength(114));
-      expect(library.surahs.fold<int>(0, (n, s) => n + s.ayat.length), 6236);
-      expect(library.surah(2)!.ayat, hasLength(286));
-      expect(library.surah(114)!.ayat, hasLength(6));
-      expect(library.surah(1)!.ayat.first.translation, startsWith('In the'));
-    });
-
-    test('the basmalah heading comes off ayah 1, not the text', () {
-      final basmalah = library.surah(1)!.ayat.first.arabic;
-      String opening(int surah) =>
-          withoutBasmalah(library.surah(surah)!.ayat.first.arabic, basmalah);
-
-      expect(opening(2), 'الٓمٓ');
-      expect(opening(95), isNot(contains('بِسْمِ')), reason: 'shadda form');
-      expect(opening(97), isNot(contains('بِسْمِ')), reason: 'shadda form');
-      expect(opening(9), library.surah(9)!.ayat.first.arabic);
-      expect(library.surah(2)!.ayat.first.arabic, startsWith(basmalah));
-      expect(library.surah(9)!.headedByBasmalah, isFalse);
     });
   });
 

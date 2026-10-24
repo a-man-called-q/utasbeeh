@@ -1,11 +1,11 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:quran_core/quran_core.dart';
 
 import 'app.dart';
 import 'features/dzikir/dzikir_progress_store.dart';
 import 'features/dzikir/dzikir_services.dart';
-import 'features/quran/quran_library.dart';
 import 'features/quran/quran_store.dart';
 import 'features/settings/settings_store.dart';
 
@@ -13,7 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final (library, quran, store, settingsBackend, _) = await (
     DzikirServices.loadLibrary(rootBundle),
-    QuranLibrary.load(rootBundle),
+    QuranLibrary.load(rootBundle.loadString),
     SharedPrefsDzikirProgressStore.open(),
     SharedPrefsSettingsBackend.open(),
     GlassSurface.precache(),
