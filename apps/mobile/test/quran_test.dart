@@ -77,7 +77,7 @@ void main() {
     await tester.tap(find.text('1. Al-Fātiḥah'));
     await tester.pumpAndSettle();
 
-    await tester.drag(find.byType(ListView), const Offset(0, -300));
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
     await tester.pumpAndSettle();
     final last = h.quran.lastRead;
     expect(last?.surah, 1);
@@ -87,5 +87,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('LANJUTKAN MEMBACA'), findsOneWidget);
     expect(find.text('Ayat ${last.ayah} dari 7'), findsOneWidget);
+  });
+
+  testWidgets('resuming opens at the saved ayah and keeps it', (tester) async {
+    final h = DzikirHarness();
+    h.quran.lastRead = (surah: 112, ayah: 3);
+    await openQuran(tester, h);
+
+    await tester.tap(find.text('Ayat 3 dari 4'));
+    await tester.pumpAndSettle();
+    // The opened ayah sits just under the bar, above the reading line.
+    expect(tester.getTopLeft(find.text('Ikhlas 3')).dy, greaterThan(144));
+    expect(
+      tester.getTopLeft(find.text('Ikhlas 3')).dy,
+      lessThan(tester.getTopLeft(find.text('Ikhlas 4')).dy),
+    );
+    expect(h.quran.lastRead, (surah: 112, ayah: 3));
   });
 }

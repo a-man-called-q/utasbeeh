@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:quran_core/quran_core.dart';
@@ -36,7 +34,12 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   /// the floating bar, so the lit ayah is never hidden behind it.
   static const _readingLine = 240.0;
 
-  final _scroll = ScrollController();
+  /// Where an opened ayah's top lands: under the bar and above the reading
+  /// line, so it is the lit one.
+  static const _openedAt = 144.0;
+
+  static const _centerKey = ValueKey('reader-center');
+
   late final _keys = [for (final _ in widget.surah.ayat) GlobalKey()];
   late int _focused = (widget.startAyah ?? 1).clamp(
     1,
@@ -44,36 +47,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   );
 
   Surah get surah => widget.surah;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.startAyah case final ayah? when ayah > 1) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _jumpTo(ayah));
-    }
-  }
-
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  /// The list builds lazily, so an ayah far down has no widget to scroll to
-  /// yet: jump to where it should be, let it build, then settle on it.
-  Future<void> _jumpTo(int ayah) async {
-    for (var attempt = 0; attempt < 10 && mounted; attempt++) {
-      final context = _keys[ayah - 1].currentContext;
-      if (context != null && context.mounted) {
-        Scrollable.ensureVisible(context, alignment: 0.22);
-        return;
-      }
-      final position = _scroll.position;
-      final guess = position.maxScrollExtent * (ayah - 1) / surah.ayat.length;
-      _scroll.jumpTo(math.min(guess, position.maxScrollExtent));
-      await WidgetsBinding.instance.endOfFrame;
-    }
-  }
 
   /// The ayah under the reading line: the last built one whose top has
   /// passed it.
@@ -113,6 +86,31 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     final padding = MediaQuery.paddingOf(context);
     final basmalah = widget.library.surah(1)?.ayat.first.arabic;
     final store = widget.store;
+    // Item 0 is the surah opening, item n is ayah n.
+    final count = surah.ayat.length + 1;
+    final start = (widget.startAyah ?? 0).clamp(0, surah.ayat.length);
+
+    Widget item(int index) {
+      if (index == 0) {
+        return _SurahOpening(
+          surah: surah,
+          basmalah: surah.headedByBasmalah ? basmalah : null,
+        );
+      }
+      final ayah = surah.ayat[index - 1];
+      final ref = (surah: surah.number, ayah: ayah.number);
+      return _AyahBlock(
+        key: _keys[index - 1],
+        ref: ref,
+        arabic: ayah.number == 1 && surah.headedByBasmalah
+            ? withoutBasmalah(ayah.arabic, basmalah ?? '')
+            : ayah.arabic,
+        translation: ayah.translation,
+        focused: _focused == ayah.number,
+        bookmarked: store.isBookmarked(ref),
+        onBookmark: () => store.toggleBookmark(ref),
+      );
+    }
 
     return Scaffold(
       body: ListenableBuilder(
@@ -122,36 +120,40 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
             Positioned.fill(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _onScroll,
-                child: ListView.builder(
-                  controller: _scroll,
-                  padding: EdgeInsets.fromLTRB(
-                    24,
-                    padding.top + 96,
-                    24,
-                    padding.bottom + 48,
+                // The start ayah is the scroll view's center, so it opens
+                // exactly in place without measuring the ayat above it
+                // (jumping to an estimate overshot, then saved the wrong
+                // ayah as last read). Earlier items grow upward from it.
+                child: LayoutBuilder(
+                  builder: (context, constraints) => CustomScrollView(
+                    center: _centerKey,
+                    anchor: start == 0
+                        ? 0
+                        : ((padding.top + _openedAt) / constraints.maxHeight)
+                              .clamp(0, 1),
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        sliver: SliverList.builder(
+                          itemCount: start,
+                          itemBuilder: (context, i) => item(start - 1 - i),
+                        ),
+                      ),
+                      SliverPadding(
+                        key: _centerKey,
+                        padding: EdgeInsets.fromLTRB(
+                          24,
+                          start == 0 ? padding.top + 96 : 0,
+                          24,
+                          padding.bottom + 48,
+                        ),
+                        sliver: SliverList.builder(
+                          itemCount: count - start,
+                          itemBuilder: (context, i) => item(start + i),
+                        ),
+                      ),
+                    ],
                   ),
-                  itemCount: surah.ayat.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return _SurahOpening(
-                        surah: surah,
-                        basmalah: surah.headedByBasmalah ? basmalah : null,
-                      );
-                    }
-                    final ayah = surah.ayat[index - 1];
-                    final ref = (surah: surah.number, ayah: ayah.number);
-                    return _AyahBlock(
-                      key: _keys[index - 1],
-                      ref: ref,
-                      arabic: ayah.number == 1 && surah.headedByBasmalah
-                          ? withoutBasmalah(ayah.arabic, basmalah ?? '')
-                          : ayah.arabic,
-                      translation: ayah.translation,
-                      focused: _focused == ayah.number,
-                      bookmarked: store.isBookmarked(ref),
-                      onBookmark: () => store.toggleBookmark(ref),
-                    );
-                  },
                 ),
               ),
             ),
